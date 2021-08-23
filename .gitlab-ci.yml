@@ -21,4 +21,5 @@ coverage:
   stage: coverage
   image: xd009642/tarpaulin
   script:
+    - rustup toolchain install nightly
     - cargo tarpaulin --doc --lib
