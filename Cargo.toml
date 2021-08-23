@@ -1,0 +1,14 @@
+[package]
+name = "osb"
+version = "0.1.0"
+authors = ["Thomas Ballasi <rust@ballasi.com>"]
+edition = "2018"
+description = "A fast, fully-fledged, scalable and secure implementation of the .osb storyboard file format"
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/osb"
+repository = "https://gitlab.com/Asperatus/osb/"
+keywords = ["osb", "osu", "storyboard", "storyboarding"]
+exclude = ["tarpaulin-report.html", ".gitlab-ci.yml"]
+readme = "README.md"
+
+[dependencies]
