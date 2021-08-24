@@ -1,5 +1,5 @@
 // Copyright 2021 Thomas Ballasi
-// This file has been written by Stéphane Traut
+// Copyright 2021 Stéphane Traut
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
@@ -8,6 +8,7 @@
 // except according to those terms.
 
 use crate::easing::Easing;
+use crate::utils::Number;
 use crate::Event;
 
 #[cfg(test)]
@@ -32,26 +33,33 @@ mod tests {
         let fade_event_easing: Fade = (Easing::QuadOut, 0, 1000, 0, 1).into();
         assert_eq!(fade_event_easing.to_line(), " F,4,0,1000,0,1");
     }
+
+    #[test]
+    fn to_line_dynamic_float() {
+        let fade_event: Fade = (0, 1000, 0.25, 0.75).into();
+        assert_eq!(fade_event.to_line(), " F,0,0,1000,0.25,0.75");
+
+        let fade_event_easing: Fade = (Easing::QuadOut, 0, 1000, 0.25, 0.75).into();
+        assert_eq!(fade_event_easing.to_line(), " F,4,0,1000,0.25,0.75");
+    }
 }
 
 /// `Fade` event
 pub enum Fade {
-    Static(usize, i32, i32),
-    Dynamic(usize, Easing, i32, i32, i32, i32),
+    Static(usize, i32, Number),
+    Dynamic(usize, Easing, i32, i32, Number, Number),
 }
 
 impl Event for Fade {
     fn to_line(&self) -> String {
         match self {
-            Fade::Static(depth, time, value) => {
-                format!(
-                    "{} F,{},{},,{}",
-                    " ".repeat(*depth),
-                    Easing::Linear.id(),
-                    time,
-                    value
-                )
-            }
+            Fade::Static(depth, time, value) => format!(
+                "{} F,{},{},,{}",
+                " ".repeat(*depth),
+                Easing::Linear.id(),
+                time,
+                value
+            ),
             Fade::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => format!(
                 "{} F,{},{},{},{},{}",
                 " ".repeat(*depth),
@@ -86,9 +94,12 @@ impl Event for Fade {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.fade_((time, value));
 /// ```
-impl Into<Fade> for (i32, i32) {
+impl<T> Into<Fade> for (i32, T)
+where
+    T: Into<Number>,
+{
     fn into(self) -> Fade {
-        Fade::Static(0, self.0, self.1)
+        Fade::Static(0, self.0, self.1.into())
     }
 }
 
@@ -108,9 +119,20 @@ impl Into<Fade> for (i32, i32) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.fade_((start_time, end_time, start_value, end_value));
 /// ```
-impl Into<Fade> for (i32, i32, i32, i32) {
+impl<T, U> Into<Fade> for (i32, i32, T, U)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
     fn into(self) -> Fade {
-        Fade::Dynamic(0, Easing::Linear, self.0, self.1, self.2, self.3)
+        Fade::Dynamic(
+            0,
+            Easing::Linear,
+            self.0,
+            self.1,
+            self.2.into(),
+            self.3.into(),
+        )
     }
 }
 
@@ -129,8 +151,12 @@ impl Into<Fade> for (i32, i32, i32, i32) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.fade_((easing, start_time, end_time, start_value, end_value));
 /// ```
-impl Into<Fade> for (Easing, i32, i32, i32, i32) {
+impl<T, U> Into<Fade> for (Easing, i32, i32, T, U)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
     fn into(self) -> Fade {
-        Fade::Dynamic(0, self.0, self.1, self.2, self.3, self.4)
+        Fade::Dynamic(0, self.0, self.1, self.2, self.3.into(), self.4.into())
     }
 }

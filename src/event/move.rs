@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use crate::easing::Easing;
-use crate::utils::Vec2;
+use crate::utils::{Number, Vec2};
 use crate::Event;
 
 #[cfg(test)]
@@ -113,7 +113,11 @@ impl Into<Move> for (i32, Vec2) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.move_((time, x, y));
 /// ```
-impl Into<Move> for (i32, i32, i32) {
+impl<T, U> Into<Move> for (i32, T, U)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
     fn into(self) -> Move {
         Move::Static(0, self.0, Vec2::from(self.1, self.2))
     }
@@ -159,7 +163,13 @@ impl Into<Move> for (i32, i32, Vec2, Vec2) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.move_((start_time, end_time, start_x, start_y, end_x, end_y));
 /// ```
-impl Into<Move> for (i32, i32, i32, i32, i32, i32) {
+impl<T, U, V, W> Into<Move> for (i32, i32, T, U, V, W)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+    V: Into<Number>,
+    W: Into<Number>,
+{
     fn into(self) -> Move {
         Move::Dynamic(
             0,
@@ -210,7 +220,13 @@ impl Into<Move> for (Easing, i32, i32, Vec2, Vec2) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.move_((easing, start_time, end_time, start_x, start_y, end_x, end_y));
 /// ```
-impl Into<Move> for (Easing, i32, i32, i32, i32, i32, i32) {
+impl<T, U, V, W> Into<Move> for (Easing, i32, i32, T, U, V, W)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+    V: Into<Number>,
+    W: Into<Number>,
+{
     fn into(self) -> Move {
         Move::Dynamic(
             0,

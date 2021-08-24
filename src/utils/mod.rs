@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+mod number;
 mod vec2;
 
+pub use number::*;
 pub use vec2::*;
