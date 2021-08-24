@@ -14,6 +14,7 @@ use crate::Origin;
 /// The struct corresponding to sprites
 pub struct Sprite {
     move_events: Vec<Move>,
+    fade_events: Vec<Fade>,
     current_depth: usize,
     path: String,
     pos: Vec2,
@@ -56,6 +57,15 @@ impl Sprite {
         self.move_events.push(event);
     }
 
+    pub fn fade_<T>(&mut self, args: T)
+    where
+        T: Into<Fade>,
+    {
+        let mut event = args.into();
+        event.set_depth(self.current_depth);
+        self.fade_events.push(event);
+    }
+
     /// Returns the contents of the `Sprite`
     ///
     /// **Warning**: this method is not meant to be used
@@ -96,6 +106,7 @@ impl Into<Sprite> for String {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: self,
             pos: Vec2::from(320, 240),
@@ -117,6 +128,7 @@ impl Into<Sprite> for &str {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: String::from(self),
             pos: Vec2::from(320, 240),
@@ -139,6 +151,7 @@ impl Into<Sprite> for (Origin, String) {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: self.1,
             pos: Vec2::from(320, 240),
@@ -161,6 +174,7 @@ impl Into<Sprite> for (Origin, &str) {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: String::from(self.1),
             pos: Vec2::from(320, 240),
@@ -183,6 +197,7 @@ impl Into<Sprite> for (String, Vec2) {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: self.0,
             pos: self.1,
@@ -205,6 +220,7 @@ impl Into<Sprite> for (&str, Vec2) {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: String::from(self.0),
             pos: self.1,
@@ -228,6 +244,7 @@ impl Into<Sprite> for (Origin, String, Vec2) {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: self.1,
             pos: self.2,
@@ -251,6 +268,7 @@ impl Into<Sprite> for (Origin, &str, Vec2) {
     fn into(self) -> Sprite {
         Sprite {
             move_events: Vec::<Move>::new(),
+            fade_events: Vec::<Fade>::new(),
             current_depth: 0,
             path: String::from(self.1),
             pos: self.2,

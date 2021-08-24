@@ -7,7 +7,9 @@
 // except according to those terms.
 
 mod event;
+mod r#fade;
 mod r#move;
 
 pub use event::Event;
+pub use r#fade::*;
 pub use r#move::*;
