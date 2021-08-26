@@ -10,8 +10,10 @@ mod event;
 mod fade;
 mod r#move;
 mod rotate;
+mod scale;
 
 pub use event::Event;
 pub use fade::*;
 pub use r#move::*;
 pub use rotate::*;
+pub use scale::*;
