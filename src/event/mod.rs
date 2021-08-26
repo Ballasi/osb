@@ -9,7 +9,9 @@
 mod event;
 mod fade;
 mod r#move;
+mod scale;
 
 pub use event::Event;
 pub use fade::*;
 pub use r#move::*;
+pub use scale::*;
