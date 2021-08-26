@@ -14,6 +14,7 @@ use crate::Origin;
 struct EventCollection {
     move_: Vec<Move>,
     fade_: Vec<Fade>,
+    rotate_: Vec<Rotate>,
 }
 
 impl EventCollection {
@@ -21,6 +22,7 @@ impl EventCollection {
         Self {
             move_: Vec::<Move>::new(),
             fade_: Vec::<Fade>::new(),
+            rotate_: Vec::<Rotate>::new(),
         }
     }
 
@@ -93,6 +95,15 @@ impl Sprite {
         let mut event = args.into();
         event.set_depth(self.current_depth);
         self.events.fade_.push(event);
+    }
+
+    pub fn rotate_<T>(&mut self, args: T)
+    where
+        T: Into<Rotate>,
+    {
+        let mut event = args.into();
+        event.set_depth(self.current_depth);
+        self.events.rotate_.push(event);
     }
 
     /// Returns the contents of the `Sprite`
