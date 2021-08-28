@@ -53,22 +53,26 @@ pub enum Scale {
 impl Event for Scale {
     fn to_line(&self) -> String {
         match self {
-            Scale::Static(depth, time, value) => format!(
-                "{} S,{},{},,{}",
-                " ".repeat(*depth),
-                Easing::Linear.id(),
-                time,
-                value
-            ),
-            Scale::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => format!(
-                "{} S,{},{},{},{},{}",
-                " ".repeat(*depth),
-                easing.id(),
-                start_time,
-                end_time,
-                start_value,
-                end_value
-            ),
+            Scale::Static(depth, time, value) => {
+                format!(
+                    "{} S,{},{},,{}",
+                    " ".repeat(*depth),
+                    Easing::Linear.id(),
+                    time,
+                    value
+                )
+            }
+            Scale::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => {
+                format!(
+                    "{} S,{},{},{},{},{}",
+                    " ".repeat(*depth),
+                    easing.id(),
+                    start_time,
+                    end_time,
+                    start_value,
+                    end_value
+                )
+            }
         }
     }
 

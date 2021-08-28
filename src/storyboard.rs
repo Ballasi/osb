@@ -38,6 +38,14 @@ pub struct Storyboard {
     foreground_modules: Vec<Module>,
 }
 
+fn modules_to_str(modules: &Vec<Module>) -> String {
+    modules
+        .iter()
+        .map(|m| m.output())
+        .collect::<Vec<String>>()
+        .join("")
+}
+
 impl Storyboard {
     /// Initializes a `Storyboard`
     pub fn new() -> Self {
@@ -82,41 +90,13 @@ impl Storyboard {
         stdout.write_all(b"[Events]\n")?;
         stdout.write_all(b"//Background and Video events\n")?;
         stdout.write_all(b"//Storyboard Layer 0 (Background)\n")?;
-        stdout.write_all(
-            self.background_modules
-                .iter()
-                .map(|m| m.output())
-                .collect::<Vec<String>>()
-                .join("")
-                .as_bytes(),
-        )?;
+        stdout.write_all(modules_to_str(&self.background_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Layer 1 (Fail)\n")?;
-        stdout.write_all(
-            self.fail_modules
-                .iter()
-                .map(|m| m.output())
-                .collect::<Vec<String>>()
-                .join("")
-                .as_bytes(),
-        )?;
+        stdout.write_all(modules_to_str(&self.fail_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Layer 2 (Pass)\n")?;
-        stdout.write_all(
-            self.pass_modules
-                .iter()
-                .map(|m| m.output())
-                .collect::<Vec<String>>()
-                .join("")
-                .as_bytes(),
-        )?;
+        stdout.write_all(modules_to_str(&self.pass_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Layer 3 (Foreground)\n")?;
-        stdout.write_all(
-            self.foreground_modules
-                .iter()
-                .map(|m| m.output())
-                .collect::<Vec<String>>()
-                .join("")
-                .as_bytes(),
-        )?;
+        stdout.write_all(modules_to_str(&self.foreground_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Layer 4 (Overlay)\n")?;
         stdout.write_all(b"//Storyboard Sound Samples\n")
     }

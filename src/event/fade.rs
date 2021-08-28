@@ -53,22 +53,26 @@ pub enum Fade {
 impl Event for Fade {
     fn to_line(&self) -> String {
         match self {
-            Fade::Static(depth, time, value) => format!(
-                "{} F,{},{},,{}",
-                " ".repeat(*depth),
-                Easing::Linear.id(),
-                time,
-                value
-            ),
-            Fade::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => format!(
-                "{} F,{},{},{},{},{}",
-                " ".repeat(*depth),
-                easing.id(),
-                start_time,
-                end_time,
-                start_value,
-                end_value
-            ),
+            Fade::Static(depth, time, value) => {
+                format!(
+                    "{} F,{},{},,{}",
+                    " ".repeat(*depth),
+                    Easing::Linear.id(),
+                    time,
+                    value
+                )
+            }
+            Fade::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => {
+                format!(
+                    "{} F,{},{},{},{},{}",
+                    " ".repeat(*depth),
+                    easing.id(),
+                    start_time,
+                    end_time,
+                    start_value,
+                    end_value
+                )
+            }
         }
     }
 

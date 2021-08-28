@@ -8,12 +8,16 @@
 
 mod event;
 mod fade;
+mod movex;
+mod movey;
 mod r#move;
 mod rotate;
 mod scale;
 
 pub use event::Event;
 pub use fade::*;
+pub use movex::*;
+pub use movey::*;
 pub use r#move::*;
 pub use rotate::*;
 pub use scale::*;

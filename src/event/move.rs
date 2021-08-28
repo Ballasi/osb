@@ -56,17 +56,19 @@ impl Event for Move {
                     pos.y
                 )
             }
-            Move::Dynamic(depth, easing, start_time, end_time, start_pos, end_pos) => format!(
-                "{} M,{},{},{},{},{},{},{}",
-                " ".repeat(*depth),
-                easing.id(),
-                start_time,
-                end_time,
-                start_pos.x,
-                start_pos.y,
-                end_pos.x,
-                end_pos.y
-            ),
+            Move::Dynamic(depth, easing, start_time, end_time, start_pos, end_pos) => {
+                format!(
+                    "{} M,{},{},{},{},{},{},{}",
+                    " ".repeat(*depth),
+                    easing.id(),
+                    start_time,
+                    end_time,
+                    start_pos.x,
+                    start_pos.y,
+                    end_pos.x,
+                    end_pos.y
+                )
+            }
         }
     }
 

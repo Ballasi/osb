@@ -13,15 +13,30 @@ use crate::Origin;
 
 struct EventCollection {
     move_: Vec<Move>,
+    movex_: Vec<MoveX>,
+    movey_: Vec<MoveY>,
     fade_: Vec<Fade>,
     rotate_: Vec<Rotate>,
     scale_: Vec<Scale>,
+}
+
+fn events_to_str<T>(events: &Vec<T>) -> String
+where
+    T: Event,
+{
+    events
+        .iter()
+        .map(|event| event.to_line() + "\n")
+        .collect::<Vec<String>>()
+        .join("")
 }
 
 impl EventCollection {
     pub fn new() -> Self {
         Self {
             move_: Vec::<Move>::new(),
+            movex_: Vec::<MoveX>::new(),
+            movey_: Vec::<MoveY>::new(),
             fade_: Vec::<Fade>::new(),
             rotate_: Vec::<Rotate>::new(),
             scale_: Vec::<Scale>::new(),
@@ -30,27 +45,13 @@ impl EventCollection {
 
     pub fn to_str(&self) -> String {
         format!(
-            "{}{}{}{}",
-            self.move_
-                .iter()
-                .map(|event| event.to_line() + "\n")
-                .collect::<Vec<String>>()
-                .join(""),
-            self.fade_
-                .iter()
-                .map(|event| event.to_line() + "\n")
-                .collect::<Vec<String>>()
-                .join(""),
-            self.rotate_
-                .iter()
-                .map(|event| event.to_line() + "\n")
-                .collect::<Vec<String>>()
-                .join(""),
-            self.scale_
-                .iter()
-                .map(|event| event.to_line() + "\n")
-                .collect::<Vec<String>>()
-                .join("")
+            "{}{}{}{}{}{}",
+            events_to_str(&self.move_),
+            events_to_str(&self.movex_),
+            events_to_str(&self.movey_),
+            events_to_str(&self.fade_),
+            events_to_str(&self.rotate_),
+            events_to_str(&self.scale_),
         )
     }
 }
@@ -128,6 +129,40 @@ impl Sprite {
     {
         let mut event = args.into();
         add_event!(self, event, self.events.move_);
+    }
+
+    /// Performs the event [`MoveX`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.movex_((0, 320));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
+    pub fn movex_<T>(&mut self, args: T)
+    where
+        T: Into<MoveX>,
+    {
+        let mut event = args.into();
+        add_event!(self, event, self.events.movex_);
+    }
+
+    /// Performs the event [`MoveY`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.movey_((0, 320));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
+    pub fn movey_<T>(&mut self, args: T)
+    where
+        T: Into<MoveY>,
+    {
+        let mut event = args.into();
+        add_event!(self, event, self.events.movey_);
     }
 
     /// Performs the event [`Fade`] to a `Sprite`

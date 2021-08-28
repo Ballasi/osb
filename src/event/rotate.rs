@@ -53,13 +53,15 @@ pub enum Rotate {
 impl Event for Rotate {
     fn to_line(&self) -> String {
         match self {
-            Rotate::Static(depth, time, value) => format!(
-                "{} R,{},{},,{}",
-                " ".repeat(*depth),
-                Easing::Linear.id(),
-                time,
-                value
-            ),
+            Rotate::Static(depth, time, value) => {
+                format!(
+                    "{} R,{},{},,{}",
+                    " ".repeat(*depth),
+                    Easing::Linear.id(),
+                    time,
+                    value
+                )
+            }
             Rotate::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => {
                 format!(
                     "{} R,{},{},{},{},{}",
