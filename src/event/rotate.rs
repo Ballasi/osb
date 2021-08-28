@@ -53,13 +53,15 @@ pub enum Rotate {
 impl Event for Rotate {
     fn to_line(&self) -> String {
         match self {
-            Rotate::Static(depth, time, value) => format!(
-                "{} R,{},{},,{}",
-                " ".repeat(*depth),
-                Easing::Linear.id(),
-                time,
-                value
-            ),
+            Rotate::Static(depth, time, value) => {
+                format!(
+                    "{} R,{},{},,{}",
+                    " ".repeat(*depth),
+                    Easing::Linear.id(),
+                    time,
+                    value
+                )
+            }
             Rotate::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => {
                 format!(
                     "{} R,{},{},{},{},{}",
@@ -80,21 +82,35 @@ impl Event for Rotate {
             Rotate::Dynamic(ref mut current_depth, ..) => *current_depth = depth,
         }
     }
+
+    fn get_start_time(&self) -> i32 {
+        match self {
+            Rotate::Static(_, start_time, _) => *start_time,
+            Rotate::Dynamic(_, _, start_time, ..) => *start_time,
+        }
+    }
+
+    fn get_end_time(&self) -> i32 {
+        match self {
+            Rotate::Static(_, end_time, _) => *end_time,
+            Rotate::Dynamic(_, _, _, end_time, ..) => *end_time,
+        }
+    }
 }
 
-/// Creates a static `Rotate` event with the timestamp and the value of the element
+/// Creates a static `Rotate` event with the timestamp and the rotation of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Rotate, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
-/// let value = 1;
+/// let rotation = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.rotate_((time, value));
+/// sprite.rotate_((time, rotation));
 /// ```
 impl<T> Into<Rotate> for (i32, T)
 where
@@ -105,21 +121,21 @@ where
     }
 }
 
-/// Creates a dynamic `Rotate` event with the timestamps and the values of the element
+/// Creates a dynamic `Rotate` event with the timestamps and the rotations of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Rotate, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 1;
+/// let start_rotation = 0;
+/// let end_rotation = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.rotate_((start_time, end_time, start_value, end_value));
+/// sprite.rotate_((start_time, end_time, start_rotation, end_rotation));
 /// ```
 impl<T, U> Into<Rotate> for (i32, i32, T, U)
 where
@@ -138,20 +154,20 @@ where
     }
 }
 
-/// Creates a dynamic `Rotate` event with the easing, the timestamps and the values of the element
+/// Creates a dynamic `Rotate` event with the easing, the timestamps and the rotations of the element
 ///
 /// Example:
 /// ```
-/// use osb::{event::Rotate, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 1;
+/// let start_rotation = 0;
+/// let end_rotation = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.rotate_((easing, start_time, end_time, start_value, end_value));
+/// sprite.rotate_((easing, start_time, end_time, start_rotation, end_rotation));
 /// ```
 impl<T, U> Into<Rotate> for (Easing, i32, i32, T, U)
 where

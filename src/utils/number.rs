@@ -47,6 +47,26 @@ pub enum Number {
     Float(f32),
 }
 
+impl Number {
+    /// Returns the f32 value of a `Number` regardless of if it's an int of a float
+    ///
+    /// Example:
+    /// ```
+    /// use osb::utils::Number;
+    ///
+    /// let integer = Number::Int(42);
+    /// let float = Number::Float(0.42);
+    /// assert_eq!(integer.as_f32(), 42.);
+    /// assert_eq!(float.as_f32(), 0.42);
+    /// ```
+    pub fn as_f32(&self) -> f32 {
+        match *self {
+            Number::Int(val) => val as f32,
+            Number::Float(val) => val,
+        }
+    }
+}
+
 impl Into<Number> for i32 {
     fn into(self) -> Number {
         Number::Int(self)

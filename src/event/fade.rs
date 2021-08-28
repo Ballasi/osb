@@ -53,22 +53,26 @@ pub enum Fade {
 impl Event for Fade {
     fn to_line(&self) -> String {
         match self {
-            Fade::Static(depth, time, value) => format!(
-                "{} F,{},{},,{}",
-                " ".repeat(*depth),
-                Easing::Linear.id(),
-                time,
-                value
-            ),
-            Fade::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => format!(
-                "{} F,{},{},{},{},{}",
-                " ".repeat(*depth),
-                easing.id(),
-                start_time,
-                end_time,
-                start_value,
-                end_value
-            ),
+            Fade::Static(depth, time, value) => {
+                format!(
+                    "{} F,{},{},,{}",
+                    " ".repeat(*depth),
+                    Easing::Linear.id(),
+                    time,
+                    value
+                )
+            }
+            Fade::Dynamic(depth, easing, start_time, end_time, start_value, end_value) => {
+                format!(
+                    "{} F,{},{},{},{},{}",
+                    " ".repeat(*depth),
+                    easing.id(),
+                    start_time,
+                    end_time,
+                    start_value,
+                    end_value
+                )
+            }
         }
     }
 
@@ -78,21 +82,35 @@ impl Event for Fade {
             Fade::Dynamic(ref mut current_depth, ..) => *current_depth = depth,
         }
     }
+
+    fn get_start_time(&self) -> i32 {
+        match self {
+            Fade::Static(_, start_time, _) => *start_time,
+            Fade::Dynamic(_, _, start_time, ..) => *start_time,
+        }
+    }
+
+    fn get_end_time(&self) -> i32 {
+        match self {
+            Fade::Static(_, end_time, _) => *end_time,
+            Fade::Dynamic(_, _, _, end_time, ..) => *end_time,
+        }
+    }
 }
 
-/// Creates a static `Fade` event with the timestamp and the value of the element
+/// Creates a static `Fade` event with the timestamp and the opacity of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Fade, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
-/// let value = 1;
+/// let opacity = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.fade_((time, value));
+/// sprite.fade_((time, opacity));
 /// ```
 impl<T> Into<Fade> for (i32, T)
 where
@@ -103,21 +121,21 @@ where
     }
 }
 
-/// Creates a dynamic `Fade` event with the timestamps and the values of the element
+/// Creates a dynamic `Fade` event with the timestamps and the opacity of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Fade, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 1;
+/// let start_opacity = 0;
+/// let end_opacity = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.fade_((start_time, end_time, start_value, end_value));
+/// sprite.fade_((start_time, end_time, start_opacity, end_opacity));
 /// ```
 impl<T, U> Into<Fade> for (i32, i32, T, U)
 where
@@ -136,20 +154,20 @@ where
     }
 }
 
-/// Creates a dynamic `Fade` event with the easing, the timestamps and the values of the element
+/// Creates a dynamic `Fade` event with the easing, the timestamps and the opacity of the element
 ///
 /// Example:
 /// ```
-/// use osb::{event::Fade, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 1;
+/// let start_opacity = 0;
+/// let end_opacity = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.fade_((easing, start_time, end_time, start_value, end_value));
+/// sprite.fade_((easing, start_time, end_time, start_opacity, end_opacity));
 /// ```
 impl<T, U> Into<Fade> for (Easing, i32, i32, T, U)
 where
