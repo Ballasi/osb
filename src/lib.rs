@@ -44,7 +44,7 @@
  *
  * If you are new to storyboarding, we'd recommend you to develop knowledge on this field first.
  * If you have no idea where to start, a great source of knowledge is PoNo's
- * [osbx Wiki](https://wiki.osbx.org/storyboard/osb).
+ * [osbx wiki](https://wiki.osbx.org/storyboard/osb).
  */
 
 /// All of the storyboard events, `Move`, `Scale`, ... and the trait `Event` defining them

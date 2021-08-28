@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use crate::easing::Easing;
-use crate::utils::Vec2;
+use crate::utils::{Number, Vec2};
 use crate::Event;
 
 #[cfg(test)]
@@ -56,17 +56,19 @@ impl Event for Move {
                     pos.y
                 )
             }
-            Move::Dynamic(depth, easing, start_time, end_time, start_pos, end_pos) => format!(
-                "{} M,{},{},{},{},{},{},{}",
-                " ".repeat(*depth),
-                easing.id(),
-                start_time,
-                end_time,
-                start_pos.x,
-                start_pos.y,
-                end_pos.x,
-                end_pos.y
-            ),
+            Move::Dynamic(depth, easing, start_time, end_time, start_pos, end_pos) => {
+                format!(
+                    "{} M,{},{},{},{},{},{},{}",
+                    " ".repeat(*depth),
+                    easing.id(),
+                    start_time,
+                    end_time,
+                    start_pos.x,
+                    start_pos.y,
+                    end_pos.x,
+                    end_pos.y
+                )
+            }
         }
     }
 
@@ -74,6 +76,20 @@ impl Event for Move {
         match self {
             Move::Static(ref mut current_depth, ..) => *current_depth = depth,
             Move::Dynamic(ref mut current_depth, ..) => *current_depth = depth,
+        }
+    }
+
+    fn get_start_time(&self) -> i32 {
+        match self {
+            Move::Static(_, start_time, _) => *start_time,
+            Move::Dynamic(_, _, start_time, ..) => *start_time,
+        }
+    }
+
+    fn get_end_time(&self) -> i32 {
+        match self {
+            Move::Static(_, end_time, _) => *end_time,
+            Move::Dynamic(_, _, _, end_time, ..) => *end_time,
         }
     }
 }
@@ -84,7 +100,7 @@ impl Event for Move {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, utils::Vec2, Sprite};
+/// use osb::{utils::Vec2, Sprite};
 ///
 /// let time = 0;
 /// let pos = Vec2::from(320, 240);
@@ -104,7 +120,7 @@ impl Into<Move> for (i32, Vec2) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
 /// let x = 320;
@@ -113,7 +129,11 @@ impl Into<Move> for (i32, Vec2) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.move_((time, x, y));
 /// ```
-impl Into<Move> for (i32, i32, i32) {
+impl<T, U> Into<Move> for (i32, T, U)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
     fn into(self) -> Move {
         Move::Static(0, self.0, Vec2::from(self.1, self.2))
     }
@@ -125,7 +145,7 @@ impl Into<Move> for (i32, i32, i32) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, utils::Vec2, Sprite};
+/// use osb::{utils::Vec2, Sprite};
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
@@ -147,7 +167,7 @@ impl Into<Move> for (i32, i32, Vec2, Vec2) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
@@ -159,7 +179,13 @@ impl Into<Move> for (i32, i32, Vec2, Vec2) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.move_((start_time, end_time, start_x, start_y, end_x, end_y));
 /// ```
-impl Into<Move> for (i32, i32, i32, i32, i32, i32) {
+impl<T, U, V, W> Into<Move> for (i32, i32, T, U, V, W)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+    V: Into<Number>,
+    W: Into<Number>,
+{
     fn into(self) -> Move {
         Move::Dynamic(
             0,
@@ -176,7 +202,7 @@ impl Into<Move> for (i32, i32, i32, i32, i32, i32) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, utils::Vec2, Easing, Sprite};
+/// use osb::{utils::Vec2, Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
@@ -197,7 +223,7 @@ impl Into<Move> for (Easing, i32, i32, Vec2, Vec2) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
@@ -210,7 +236,13 @@ impl Into<Move> for (Easing, i32, i32, Vec2, Vec2) {
 /// let mut sprite = Sprite::new("res/sprite.png");
 /// sprite.move_((easing, start_time, end_time, start_x, start_y, end_x, end_y));
 /// ```
-impl Into<Move> for (Easing, i32, i32, i32, i32, i32, i32) {
+impl<T, U, V, W> Into<Move> for (Easing, i32, i32, T, U, V, W)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+    V: Into<Number>,
+    W: Into<Number>,
+{
     fn into(self) -> Move {
         Move::Dynamic(
             0,

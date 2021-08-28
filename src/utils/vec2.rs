@@ -6,6 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::utils::Number;
 use std::ops::{Add, AddAssign, Neg, Sub, SubAssign};
 
 #[cfg(test)]
@@ -49,17 +50,27 @@ mod tests {
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vec2 {
-    pub x: i32,
-    pub y: i32,
+    pub x: Number,
+    pub y: Number,
 }
 
 impl Vec2 {
     pub fn new() -> Self {
-        Self { x: 0, y: 0 }
+        Self {
+            x: Number::Int(0),
+            y: Number::Int(0),
+        }
     }
 
-    pub fn from(x: i32, y: i32) -> Self {
-        Self { x, y }
+    pub fn from<T, U>(x: T, y: U) -> Self
+    where
+        T: Into<Number>,
+        U: Into<Number>,
+    {
+        Self {
+            x: x.into(),
+            y: y.into(),
+        }
     }
 }
 
