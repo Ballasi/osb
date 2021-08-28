@@ -6,7 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::f64::consts::PI;
+use crate::utils::Number;
+use std::f32::consts::PI;
 
 #[cfg(test)]
 mod tests {
@@ -71,10 +72,10 @@ mod tests {
         assert_eq!(Easing::QuintOut.ease(1, 0, 2, 0., 200.), Some(193.75));
         assert_eq!(
             Easing::SineOut.ease(1, 0, 2, 0., 1.),
-            Some(2_f64.sqrt() / 2.)
+            Some(2_f32.sqrt() / 2.)
         );
         assert_eq!(Easing::ExpoOut.ease(1, 0, 2, 0., 200.), Some(193.75));
-        assert_eq!(Easing::CircOut.ease(1, 0, 2, 0., 1.), Some(0.75_f64.sqrt()));
+        assert_eq!(Easing::CircOut.ease(1, 0, 2, 0., 1.), Some(0.75_f32.sqrt()));
         assert_eq!(Easing::ElasticIn.ease(1, 0, 2, 0., 200.), Some(-3.125));
         assert_eq!(Easing::BackOut.ease(1, 0, 2, 0., 200.), Some(217.5395));
         assert_eq!(Easing::BounceIn.ease(1, 0, 2, 0., 200.), Some(46.875));
@@ -266,31 +267,40 @@ impl Easing {
     /// let value = Easing::Out.ease(1000, 0, 2000, 100., 200.);
     /// assert_eq!(value, Some(175.));
     /// ```
-    pub fn ease(
+    pub fn ease<T, U>(
         self,
         time: i32,
         start_time: i32,
         end_time: i32,
-        from: f64,
-        to: f64,
-    ) -> Option<f64> {
+        from: T,
+        to: U,
+    ) -> Option<f32>
+    where
+        T: Into<Number>,
+        U: Into<Number>,
+    {
+        let from = from.into().as_f32();
+        let to = to.into().as_f32();
+
         if time < start_time || time > end_time || to < from {
             return None;
         }
 
         Some(
-            self.calculate((time - start_time) as f64 / (end_time - start_time) as f64)
+            self.calculate((time - start_time) as f32 / (end_time - start_time) as f32)
                 * (to - from)
                 + from,
         )
     }
 
-    fn calculate(self, x: f64) -> f64 {
-        if x < f64::EPSILON { // if x < 0.
+    fn calculate(self, x: f32) -> f32 {
+        if x < f32::EPSILON {
+            // if x < 0.
             return 0.;
         }
 
-        if 1. - x < f64::EPSILON { // if x > 1.
+        if 1. - x < f32::EPSILON {
+            // if x > 1.
             return 1.;
         }
 
@@ -311,7 +321,7 @@ impl Easing {
             Easing::SineIn => 1. - (x * PI / 2.).cos(),
             Easing::SineOut => Easing::SineIn.reverse(x),
             Easing::SineInOut => Easing::SineIn.in_out(x),
-            Easing::ExpoIn => 2.0_f64.powf(10. * (x - 1.)),
+            Easing::ExpoIn => 2.0_f32.powf(10. * (x - 1.)),
             Easing::ExpoOut => Easing::ExpoIn.reverse(x),
             Easing::ExpoInOut => Easing::ExpoIn.in_out(x),
             Easing::CircIn => 1. - (1. - x * x).sqrt(),
@@ -319,7 +329,7 @@ impl Easing {
             Easing::CircInOut => Easing::CircOut.in_out(x),
             Easing::ElasticIn => Easing::ElasticOut.reverse(x),
             Easing::ElasticOut | Easing::ElasticHalfOut | Easing::ElasticQuarterOut => {
-                2.0_f64.powf(-10. * x) * ((x - 0.075) * 2. * PI / 0.3).sin() + 1.
+                2.0_f32.powf(-10. * x) * ((x - 0.075) * 2. * PI / 0.3).sin() + 1.
             }
             Easing::ElasticInOut => Easing::ElasticIn.in_out(x),
             Easing::BackIn => x * x * ((1.70158 + 1.) * x - 1.70158),
@@ -341,11 +351,11 @@ impl Easing {
         }
     }
 
-    fn reverse(self, x: f64) -> f64 {
+    fn reverse(self, x: f32) -> f32 {
         1. - self.calculate(1. - x)
     }
 
-    fn in_out(self, x: f64) -> f64 {
+    fn in_out(self, x: f32) -> f32 {
         0.5 * if x < 0.5 {
             self.calculate(2. * x)
         } else {

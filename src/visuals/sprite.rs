@@ -67,6 +67,35 @@ pub struct Sprite {
     end_time: Option<i32>,
 }
 
+// Adding an event to a sprite
+macro_rules! add_event {
+    ($sprite:ident, $event:ident, $events:expr) => {
+        // Adjusting sprite's start and end values
+        let (event_start, event_end) = ($event.get_start_time(), $event.get_end_time());
+        match $sprite.start_time {
+            Some(sprite_start) => {
+                if event_start < sprite_start {
+                    $sprite.start_time = Some(event_start)
+                }
+            }
+            None => $sprite.start_time = Some(event_start),
+        }
+
+        match $sprite.end_time {
+            Some(sprite_end) => {
+                if sprite_end < event_end {
+                    $sprite.end_time = Some(event_end)
+                }
+            }
+            None => $sprite.end_time = Some(event_end),
+        }
+
+        // Pushing it to the events
+        $event.set_depth($sprite.current_depth);
+        $events.push($event);
+    };
+}
+
 impl Sprite {
     /// Initializes a new `Sprite`
     ///
@@ -98,9 +127,7 @@ impl Sprite {
         T: Into<Move>,
     {
         let mut event = args.into();
-        self.process_event(event.get_start_time(), event.get_end_time());
-        event.set_depth(self.current_depth);
-        self.events.move_.push(event);
+        add_event!(self, event, self.events.move_);
     }
 
     /// Performs the event [`Fade`] to a `Sprite`
@@ -117,9 +144,7 @@ impl Sprite {
         T: Into<Fade>,
     {
         let mut event = args.into();
-        self.process_event(event.get_start_time(), event.get_end_time());
-        event.set_depth(self.current_depth);
-        self.events.fade_.push(event);
+        add_event!(self, event, self.events.fade_);
     }
 
     /// Performs the event [`Rotate`] to a `Sprite`
@@ -137,9 +162,7 @@ impl Sprite {
         T: Into<Rotate>,
     {
         let mut event = args.into();
-        self.process_event(event.get_start_time(), event.get_end_time());
-        event.set_depth(self.current_depth);
-        self.events.rotate_.push(event);
+        add_event!(self, event, self.events.rotate_);
     }
 
     /// Performs the event [`Scale`] to a `Sprite`
@@ -156,29 +179,7 @@ impl Sprite {
         T: Into<Scale>,
     {
         let mut event = args.into();
-        self.process_event(event.get_start_time(), event.get_end_time());
-        event.set_depth(self.current_depth);
-        self.events.scale_.push(event);
-    }
-
-    fn process_event(&mut self, event_start: i32, event_end: i32) {
-        match self.start_time {
-            Some(sprite_start) => {
-                if event_start < sprite_start {
-                    self.start_time = Some(event_start)
-                }
-            }
-            None => self.start_time = Some(event_start),
-        }
-
-        match self.end_time {
-            Some(sprite_end) => {
-                if sprite_end < event_end {
-                    self.end_time = Some(event_end)
-                }
-            }
-            None => self.end_time = Some(event_end),
-        }
+        add_event!(self, event, self.events.scale_);
     }
 
     /// Returns the initial X position of a `Sprite`
