@@ -30,13 +30,23 @@ impl EventCollection {
 
     pub fn to_str(&self) -> String {
         format!(
-            "{}{}",
+            "{}{}{}{}",
             self.move_
                 .iter()
                 .map(|event| event.to_line() + "\n")
                 .collect::<Vec<String>>()
                 .join(""),
             self.fade_
+                .iter()
+                .map(|event| event.to_line() + "\n")
+                .collect::<Vec<String>>()
+                .join(""),
+            self.rotate_
+                .iter()
+                .map(|event| event.to_line() + "\n")
+                .collect::<Vec<String>>()
+                .join(""),
+            self.scale_
                 .iter()
                 .map(|event| event.to_line() + "\n")
                 .collect::<Vec<String>>()
@@ -53,6 +63,8 @@ pub struct Sprite {
     pos: Vec2,
     layer: Layer,
     origin: Origin,
+    start_time: Option<i32>,
+    end_time: Option<i32>,
 }
 
 impl Sprite {
@@ -66,7 +78,7 @@ impl Sprite {
         args.into()
     }
 
-    /// Performs the event `Move` to a `Sprite`
+    /// Performs the event [`Move`] to a `Sprite`
     ///
     /// ```
     /// use osb::{ Sprite, Easing, utils::Vec2 };
@@ -79,42 +91,162 @@ impl Sprite {
     /// sprite.move_((Easing::QuadInOut, 1000, 2000, 320, 240, 100, 100));
     /// // And of course you can use a static move too
     /// sprite.move_((3000, Vec2::from(320, 240)));
+    /// // Please refer to the trait implementations of the event to see everything you can do
     /// ```
-
     pub fn move_<T>(&mut self, args: T)
     where
         T: Into<Move>,
     {
         let mut event = args.into();
+        self.process_event(event.get_start_time(), event.get_end_time());
         event.set_depth(self.current_depth);
         self.events.move_.push(event);
     }
 
+    /// Performs the event [`Fade`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.fade_((0, 1));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
     pub fn fade_<T>(&mut self, args: T)
     where
         T: Into<Fade>,
     {
         let mut event = args.into();
+        self.process_event(event.get_start_time(), event.get_end_time());
         event.set_depth(self.current_depth);
         self.events.fade_.push(event);
     }
 
+    /// Performs the event [`Rotate`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use std::f32::consts::PI;
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.rotate_((0, PI));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
     pub fn rotate_<T>(&mut self, args: T)
     where
         T: Into<Rotate>,
     {
         let mut event = args.into();
+        self.process_event(event.get_start_time(), event.get_end_time());
         event.set_depth(self.current_depth);
         self.events.rotate_.push(event);
     }
 
+    /// Performs the event [`Scale`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.scale_((0, 1));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
     pub fn scale_<T>(&mut self, args: T)
     where
         T: Into<Scale>,
     {
         let mut event = args.into();
+        self.process_event(event.get_start_time(), event.get_end_time());
         event.set_depth(self.current_depth);
         self.events.scale_.push(event);
+    }
+
+    fn process_event(&mut self, event_start: i32, event_end: i32) {
+        match self.start_time {
+            Some(sprite_start) => {
+                if event_start < sprite_start {
+                    self.start_time = Some(event_start)
+                }
+            }
+            None => self.start_time = Some(event_start),
+        }
+
+        match self.end_time {
+            Some(sprite_end) => {
+                if sprite_end < event_end {
+                    self.end_time = Some(event_end)
+                }
+            }
+            None => self.end_time = Some(event_end),
+        }
+    }
+
+    /// Returns the initial X position of a `Sprite`
+    ///
+    /// **Warning**: This does **not** return the X position in a certain time.
+    ///
+    /// Example:
+    /// ```
+    /// use osb::{utils::Number, Sprite};
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.move_((0, 100, 100));
+    /// assert_eq!(sprite.get_x(), Number::Int(320));
+    /// ```
+    pub fn get_x(&self) -> Number {
+        self.pos.x
+    }
+
+    /// Returns the initial Y position of a `Sprite`
+    ///
+    /// **Warning**: This does **not** return the Y position in a certain time.
+    ///
+    /// Example:
+    /// ```
+    /// use osb::{utils::Number, Sprite};
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.move_((0, 100, 100));
+    /// assert_eq!(sprite.get_y(), Number::Int(240));
+    /// ```
+    pub fn get_y(&self) -> Number {
+        self.pos.y
+    }
+
+    /// Returns the start time of the first event of a `Sprite`
+    ///
+    /// Example:
+    /// ```
+    /// use osb::Sprite;
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// assert_eq!(sprite.start_time(), None);
+    ///
+    /// sprite.move_((100, 200, 0, 0, 320, 240));
+    /// assert_eq!(sprite.start_time(), Some(100));
+    ///
+    /// sprite.fade_((0, 100, 0, 1));
+    /// assert_eq!(sprite.start_time(), Some(0));
+    /// ```
+    pub fn start_time(&self) -> Option<i32> {
+        self.start_time
+    }
+
+    /// Returns the end time of the first event of a `Sprite`
+    ///
+    /// Example:
+    /// ```
+    /// use osb::Sprite;
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// assert_eq!(sprite.end_time(), None);
+    ///
+    /// sprite.move_((0, 100, 0, 0, 320, 240));
+    /// assert_eq!(sprite.end_time(), Some(100));
+    ///
+    /// sprite.fade_((100, 200, 1, 0));
+    /// assert_eq!(sprite.end_time(), Some(200));
+    /// ```
+    pub fn end_time(&self) -> Option<i32> {
+        self.end_time
     }
 
     /// Returns the contents of the `Sprite`
@@ -157,6 +289,8 @@ impl Into<Sprite> for String {
             pos: Vec2::from(320, 240),
             layer: Layer::Background,
             origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -178,6 +312,8 @@ impl Into<Sprite> for &str {
             pos: Vec2::from(320, 240),
             layer: Layer::Background,
             origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -200,6 +336,8 @@ impl Into<Sprite> for (Origin, String) {
             pos: Vec2::from(320, 240),
             layer: Layer::Background,
             origin: self.0,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -222,6 +360,8 @@ impl Into<Sprite> for (Origin, &str) {
             pos: Vec2::from(320, 240),
             layer: Layer::Background,
             origin: self.0,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -244,6 +384,8 @@ impl Into<Sprite> for (String, Vec2) {
             pos: self.1,
             layer: Layer::Background,
             origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -271,6 +413,8 @@ where
             pos: Vec2::from(self.1, self.2),
             layer: Layer::Background,
             origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -293,6 +437,8 @@ impl Into<Sprite> for (&str, Vec2) {
             pos: self.1,
             layer: Layer::Background,
             origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -320,6 +466,8 @@ where
             pos: Vec2::from(self.1, self.2),
             layer: Layer::Background,
             origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -343,6 +491,8 @@ impl Into<Sprite> for (Origin, String, Vec2) {
             pos: self.2,
             layer: Layer::Background,
             origin: self.0,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -371,6 +521,8 @@ where
             pos: Vec2::from(self.2, self.3),
             layer: Layer::Background,
             origin: self.0,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -394,6 +546,8 @@ impl Into<Sprite> for (Origin, &str, Vec2) {
             pos: self.2,
             layer: Layer::Background,
             origin: self.0,
+            start_time: None,
+            end_time: None,
         }
     }
 }
@@ -422,6 +576,8 @@ where
             pos: Vec2::from(self.2, self.3),
             layer: Layer::Background,
             origin: self.0,
+            start_time: None,
+            end_time: None,
         }
     }
 }

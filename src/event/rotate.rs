@@ -80,6 +80,20 @@ impl Event for Rotate {
             Rotate::Dynamic(ref mut current_depth, ..) => *current_depth = depth,
         }
     }
+
+    fn get_start_time(&self) -> i32 {
+        match self {
+            Rotate::Static(_, start_time, _) => *start_time,
+            Rotate::Dynamic(_, _, start_time, ..) => *start_time,
+        }
+    }
+
+    fn get_end_time(&self) -> i32 {
+        match self {
+            Rotate::Static(_, end_time, _) => *end_time,
+            Rotate::Dynamic(_, _, _, end_time, ..) => *end_time,
+        }
+    }
 }
 
 /// Creates a static `Rotate` event with the timestamp and the value of the element

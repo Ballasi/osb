@@ -286,9 +286,12 @@ impl Easing {
     }
 
     fn calculate(self, x: f64) -> f64 {
-        if x == 0. || x == 1. {
-            // For cleaner measure, it allows us to avoid decimal points
-            return x;
+        if x < f64::EPSILON { // if x < 0.
+            return 0.;
+        }
+
+        if 1. - x < f64::EPSILON { // if x > 1.
+            return 1.;
         }
 
         match self {
