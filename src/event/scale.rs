@@ -98,19 +98,19 @@ impl Event for Scale {
     }
 }
 
-/// Creates a static `Scale` event with the timestamp and the scale value of the element
+/// Creates a static `Scale` event with the timestamp and the scaling of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Scale, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
-/// let scale_value = 1;
+/// let scale = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.scale_((time, scale_value));
+/// sprite.scale_((time, scale));
 /// ```
 impl<T> Into<Scale> for (i32, T)
 where
@@ -121,21 +121,21 @@ where
     }
 }
 
-/// Creates a dynamic `Scale` event with the timestamps and the scale values of the element
+/// Creates a dynamic `Scale` event with the timestamps and the scalings of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Scale, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let scale_start_value = 0;
-/// let scale_end_value = 1;
+/// let start_scale = 0;
+/// let end_scale = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.scale_((start_time, end_time, scale_start_value, scale_end_value));
+/// sprite.scale_((start_time, end_time, start_scale, end_scale));
 /// ```
 impl<T, U> Into<Scale> for (i32, i32, T, U)
 where
@@ -154,20 +154,20 @@ where
     }
 }
 
-/// Creates a dynamic `Scale` event with the easing, the timestamps and the scale values of the element
+/// Creates a dynamic `Scale` event with the easing, the timestamps and the scalings of the element
 ///
 /// Example:
 /// ```
-/// use osb::{event::Scale, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let scale_start_value = 0;
-/// let scale_end_value = 1;
+/// let start_scale = 0;
+/// let end_scale = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.scale_((easing, start_time, end_time, scale_start_value, scale_end_value));
+/// sprite.scale_((easing, start_time, end_time, start_scale, end_scale));
 /// ```
 impl<T, U> Into<Scale> for (Easing, i32, i32, T, U)
 where

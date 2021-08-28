@@ -100,7 +100,7 @@ impl Event for Move {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, utils::Vec2, Sprite};
+/// use osb::{utils::Vec2, Sprite};
 ///
 /// let time = 0;
 /// let pos = Vec2::from(320, 240);
@@ -120,7 +120,7 @@ impl Into<Move> for (i32, Vec2) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
 /// let x = 320;
@@ -145,7 +145,7 @@ where
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, utils::Vec2, Sprite};
+/// use osb::{utils::Vec2, Sprite};
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
@@ -167,7 +167,7 @@ impl Into<Move> for (i32, i32, Vec2, Vec2) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
@@ -202,7 +202,7 @@ where
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, utils::Vec2, Easing, Sprite};
+/// use osb::{utils::Vec2, Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
@@ -223,7 +223,7 @@ impl Into<Move> for (Easing, i32, i32, Vec2, Vec2) {
 ///
 /// Example:
 /// ```
-/// use osb::{event::Move, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;

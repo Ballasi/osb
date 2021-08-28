@@ -6,6 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+mod color;
 mod event;
 mod fade;
 mod movex;
@@ -13,7 +14,9 @@ mod movey;
 mod r#move;
 mod rotate;
 mod scale;
+mod scalevec;
 
+pub use color::*;
 pub use event::Event;
 pub use fade::*;
 pub use movex::*;
@@ -21,3 +24,4 @@ pub use movey::*;
 pub use r#move::*;
 pub use rotate::*;
 pub use scale::*;
+pub use scalevec::*;

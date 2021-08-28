@@ -18,6 +18,8 @@ struct EventCollection {
     fade_: Vec<Fade>,
     rotate_: Vec<Rotate>,
     scale_: Vec<Scale>,
+    scalevec_: Vec<ScaleVec>,
+    color_: Vec<Color>,
 }
 
 fn events_to_str<T>(events: &Vec<T>) -> String
@@ -40,18 +42,22 @@ impl EventCollection {
             fade_: Vec::<Fade>::new(),
             rotate_: Vec::<Rotate>::new(),
             scale_: Vec::<Scale>::new(),
+            scalevec_: Vec::<ScaleVec>::new(),
+            color_: Vec::<Color>::new(),
         }
     }
 
     pub fn to_str(&self) -> String {
         format!(
-            "{}{}{}{}{}{}",
+            "{}{}{}{}{}{}{}{}",
             events_to_str(&self.move_),
             events_to_str(&self.movex_),
             events_to_str(&self.movey_),
             events_to_str(&self.fade_),
             events_to_str(&self.rotate_),
             events_to_str(&self.scale_),
+            events_to_str(&self.scalevec_),
+            events_to_str(&self.color_),
         )
     }
 }
@@ -154,7 +160,7 @@ impl Sprite {
     /// use osb::{ Sprite, Easing, utils::Vec2 };
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
-    /// sprite.movey_((0, 320));
+    /// sprite.movey_((0, 240));
     /// // Please refer to the trait implementations of the event to see everything you can do
     /// ```
     pub fn movey_<T>(&mut self, args: T)
@@ -215,6 +221,50 @@ impl Sprite {
     {
         let mut event = args.into();
         add_event!(self, event, self.events.scale_);
+    }
+
+    /// Performs the event [`ScaleVec`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// // There's a `Vec2` type you can use if you wish
+    /// sprite.scalevec_((Easing::Out, 0, 1000, Vec2::from(1, 0), Vec2::from(1, 1)));
+    /// // But you're not forced to! Giving pairs of integers automatically translates to a `Vec2`
+    /// sprite.scalevec_((Easing::QuadInOut, 1000, 2000, 1, 0, 1, 1));
+    /// // And of course you can use a static ScaleVec too
+    /// sprite.scalevec_((3000, Vec2::from(1, 0.5)));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
+    pub fn scalevec_<T>(&mut self, args: T)
+    where
+        T: Into<ScaleVec>,
+    {
+        let mut event = args.into();
+        add_event!(self, event, self.events.scalevec_);
+    }
+
+    /// Performs the event [`Color`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{ Sprite, Easing, utils::Color };
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// // There's a `Color` type you can use if you wish
+    /// sprite.color_((Easing::Out, 0, 1000, Color::white(), Color::red()));
+    /// // But you're not forced to! Giving pairs of integers automatically translates to a `Color`
+    /// sprite.color_((Easing::QuadInOut, 1000, 2000, 255, 255, 255, 255, 0, 0));
+    /// // And of course you can use a static Color too
+    /// sprite.color_((3000, Color::green()));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
+    pub fn color_<T>(&mut self, args: T)
+    where
+        T: Into<Color>,
+    {
+        let mut event = args.into();
+        add_event!(self, event, self.events.color_);
     }
 
     /// Returns the initial X position of a `Sprite`

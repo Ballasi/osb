@@ -22,7 +22,6 @@ mod tests {
         sb.push(fail_module);
         sb.push(pass_module);
         sb.push(foreground_module);
-        sb.print().unwrap();
     }
 }
 

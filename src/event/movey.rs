@@ -98,19 +98,19 @@ impl Event for MoveY {
     }
 }
 
-/// Creates a static `MoveY` event with the timestamp and the value of the element
+/// Creates a static `MoveY` event with the timestamp and the Y position of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::MoveY, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
-/// let value = 0;
+/// let pos_y = 0;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.movey_((time, value));
+/// sprite.movey_((time, pos_y));
 /// ```
 impl<T> Into<MoveY> for (i32, T)
 where
@@ -121,21 +121,21 @@ where
     }
 }
 
-/// Creates a dynamic `MoveY` event with the timestamps and the values of the element
+/// Creates a dynamic `MoveY` event with the timestamps and the Y positions of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::MoveY, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 240;
+/// let start_pos_y = 0;
+/// let end_pos_y = 240;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.movey_((start_time, end_time, start_value, end_value));
+/// sprite.movey_((start_time, end_time, start_pos_y, end_pos_y));
 /// ```
 impl<T, U> Into<MoveY> for (i32, i32, T, U)
 where
@@ -154,20 +154,20 @@ where
     }
 }
 
-/// Creates a dynamic `MoveY` event with the easing, the timestamps and the values of the element
+/// Creates a dynamic `MoveY` event with the easing, the timestamps and the Y positions of the element
 ///
 /// Example:
 /// ```
-/// use osb::{event::MoveY, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 240;
+/// let start_pos_y = 0;
+/// let end_pos_y = 240;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.movey_((easing, start_time, end_time, start_value, end_value));
+/// sprite.movey_((easing, start_time, end_time, start_pos_y, end_pos_y));
 /// ```
 impl<T, U> Into<MoveY> for (Easing, i32, i32, T, U)
 where

@@ -98,19 +98,19 @@ impl Event for MoveX {
     }
 }
 
-/// Creates a static `MoveX` event with the timestamp and the value of the element
+/// Creates a static `MoveX` event with the timestamp and the X position of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::MoveX, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
-/// let value = 0;
+/// let pos_x = 0;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.movex_((time, value));
+/// sprite.movex_((time, pos_x));
 /// ```
 impl<T> Into<MoveX> for (i32, T)
 where
@@ -121,21 +121,21 @@ where
     }
 }
 
-/// Creates a dynamic `MoveX` event with the timestamps and the values of the element
+/// Creates a dynamic `MoveX` event with the timestamps and the X positions of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::MoveX, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 320;
+/// let start_pos_x = 0;
+/// let end_pos_x = 320;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.movex_((start_time, end_time, start_value, end_value));
+/// sprite.movex_((start_time, end_time, start_pos_x, end_pos_x));
 /// ```
 impl<T, U> Into<MoveX> for (i32, i32, T, U)
 where
@@ -154,20 +154,20 @@ where
     }
 }
 
-/// Creates a dynamic `MoveX` event with the easing, the timestamps and the values of the element
+/// Creates a dynamic `MoveX` event with the easing, the timestamps and the X positions of the element
 ///
 /// Example:
 /// ```
-/// use osb::{event::MoveX, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 320;
+/// let start_pos_x = 0;
+/// let end_pos_x = 320;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.movex_((easing, start_time, end_time, start_value, end_value));
+/// sprite.movex_((easing, start_time, end_time, start_pos_x, end_pos_x));
 /// ```
 impl<T, U> Into<MoveX> for (Easing, i32, i32, T, U)
 where

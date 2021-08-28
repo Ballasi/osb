@@ -98,19 +98,19 @@ impl Event for Rotate {
     }
 }
 
-/// Creates a static `Rotate` event with the timestamp and the value of the element
+/// Creates a static `Rotate` event with the timestamp and the rotation of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Rotate, Sprite};
+/// use osb::Sprite;
 ///
 /// let time = 0;
-/// let value = 1;
+/// let rotation = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.rotate_((time, value));
+/// sprite.rotate_((time, rotation));
 /// ```
 impl<T> Into<Rotate> for (i32, T)
 where
@@ -121,21 +121,21 @@ where
     }
 }
 
-/// Creates a dynamic `Rotate` event with the timestamps and the values of the element
+/// Creates a dynamic `Rotate` event with the timestamps and the rotations of the element
 ///
 /// Uses a `Linear` easing
 ///
 /// Example:
 /// ```
-/// use osb::{event::Rotate, Sprite};
+/// use osb::Sprite;
 ///
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 1;
+/// let start_rotation = 0;
+/// let end_rotation = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.rotate_((start_time, end_time, start_value, end_value));
+/// sprite.rotate_((start_time, end_time, start_rotation, end_rotation));
 /// ```
 impl<T, U> Into<Rotate> for (i32, i32, T, U)
 where
@@ -154,20 +154,20 @@ where
     }
 }
 
-/// Creates a dynamic `Rotate` event with the easing, the timestamps and the values of the element
+/// Creates a dynamic `Rotate` event with the easing, the timestamps and the rotations of the element
 ///
 /// Example:
 /// ```
-/// use osb::{event::Rotate, Easing, Sprite};
+/// use osb::{Easing, Sprite};
 ///
 /// let easing = Easing::Out;
 /// let start_time = 0;
 /// let end_time = 1000;
-/// let start_value = 0;
-/// let end_value = 1;
+/// let start_rotation = 0;
+/// let end_rotation = 1;
 ///
 /// let mut sprite = Sprite::new("res/sprite.png");
-/// sprite.rotate_((easing, start_time, end_time, start_value, end_value));
+/// sprite.rotate_((easing, start_time, end_time, start_rotation, end_rotation));
 /// ```
 impl<T, U> Into<Rotate> for (Easing, i32, i32, T, U)
 where
