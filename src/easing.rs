@@ -7,6 +7,8 @@
 // except according to those terms.
 
 use crate::utils::Number;
+use std::error::Error;
+use std::fmt;
 use std::f32::consts::PI;
 
 #[cfg(test)]
@@ -164,6 +166,14 @@ pub enum Easing {
 pub enum EasingParsingError {
     IncorrectID,
 }
+
+impl fmt::Display for EasingParsingError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Given easing ID does not correspond to any existing easing")
+    }
+}
+
+impl Error for EasingParsingError {}
 
 impl PartialEq for Easing {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.

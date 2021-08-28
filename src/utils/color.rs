@@ -142,9 +142,3 @@ impl Color {
         }
     }
 }
-
-impl Into<Color> for (i32, i32, i32) {
-    fn into(self) -> Color {
-        Color::from(self.0, self.1, self.2)
-    }
-}

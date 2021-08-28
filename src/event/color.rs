@@ -18,16 +18,16 @@ mod tests {
     fn to_line_static() {
         let mut color_event_depth: Color = (100, 0, 0, 0).into();
         color_event_depth.set_depth(2);
-        assert_eq!(color_event_depth.to_line(), "   M,0,100,,0,0,0");
+        assert_eq!(color_event_depth.to_line(), "   C,0,100,,0,0,0");
     }
 
     #[test]
     fn to_line_dynamic() {
         let color_event: Color = (0, 1000, 0, 0, 0, 255, 255, 255).into();
-        assert_eq!(color_event.to_line(), " M,0,0,1000,0,0,0,255,255,255");
+        assert_eq!(color_event.to_line(), " C,0,0,1000,0,0,0,255,255,255");
 
         let color_event_easing: Color = (Easing::QuadOut, 0, 1000, 0, 0, 0, 255, 255, 255).into();
-        assert_eq!(color_event_easing.to_line(), " M,4,0,1000,0,0,0,255,255,255");
+        assert_eq!(color_event_easing.to_line(), " C,4,0,1000,0,0,0,255,255,255");
     }
 }
 
@@ -42,7 +42,7 @@ impl Event for Color {
         match self {
             Color::Static(depth, time, color) => {
                 format!(
-                    "{} M,{},{},,{},{},{}",
+                    "{} C,{},{},,{},{},{}",
                     " ".repeat(*depth),
                     Easing::Linear.id(),
                     time,
@@ -53,7 +53,7 @@ impl Event for Color {
             }
             Color::Dynamic(depth, easing, start_time, end_time, start_color, end_color) => {
                 format!(
-                    "{} M,{},{},{},{},{},{},{},{},{}",
+                    "{} C,{},{},{},{},{},{},{},{},{}",
                     " ".repeat(*depth),
                     easing.id(),
                     start_time,

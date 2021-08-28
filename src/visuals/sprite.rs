@@ -20,6 +20,9 @@ struct EventCollection {
     scale_: Vec<Scale>,
     scalevec_: Vec<ScaleVec>,
     color_: Vec<Color>,
+    hflip_: Vec<HFlip>,
+    vflip_: Vec<VFlip>,
+    additive_: Vec<Additive>,
 }
 
 fn events_to_str<T>(events: &Vec<T>) -> String
@@ -44,12 +47,15 @@ impl EventCollection {
             scale_: Vec::<Scale>::new(),
             scalevec_: Vec::<ScaleVec>::new(),
             color_: Vec::<Color>::new(),
+            hflip_: Vec::<HFlip>::new(),
+            vflip_: Vec::<VFlip>::new(),
+            additive_: Vec::<Additive>::new(),
         }
     }
 
     pub fn to_str(&self) -> String {
         format!(
-            "{}{}{}{}{}{}{}{}",
+            "{}{}{}{}{}{}{}{}{}{}{}",
             events_to_str(&self.move_),
             events_to_str(&self.movex_),
             events_to_str(&self.movey_),
@@ -58,6 +64,9 @@ impl EventCollection {
             events_to_str(&self.scale_),
             events_to_str(&self.scalevec_),
             events_to_str(&self.color_),
+            events_to_str(&self.hflip_),
+            events_to_str(&self.vflip_),
+            events_to_str(&self.additive_),
         )
     }
 }
@@ -117,7 +126,7 @@ impl Sprite {
     /// Performs the event [`Move`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use osb::{Sprite, Easing, utils::Vec2};
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
     ///
@@ -140,7 +149,7 @@ impl Sprite {
     /// Performs the event [`MoveX`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use osb::{Sprite, Easing, utils::Vec2};
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
     /// sprite.movex_((0, 320));
@@ -157,7 +166,7 @@ impl Sprite {
     /// Performs the event [`MoveY`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use osb::{Sprite, Easing, utils::Vec2};
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
     /// sprite.movey_((0, 240));
@@ -174,7 +183,7 @@ impl Sprite {
     /// Performs the event [`Fade`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use osb::{Sprite, Easing, utils::Vec2};
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
     /// sprite.fade_((0, 1));
@@ -191,7 +200,7 @@ impl Sprite {
     /// Performs the event [`Rotate`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use osb::{Sprite, Easing, utils::Vec2};
     /// use std::f32::consts::PI;
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
@@ -209,7 +218,7 @@ impl Sprite {
     /// Performs the event [`Scale`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use osb::{Sprite, Easing, utils::Vec2};
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
     /// sprite.scale_((0, 1));
@@ -226,7 +235,7 @@ impl Sprite {
     /// Performs the event [`ScaleVec`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Vec2 };
+    /// use osb::{Sprite, Easing, utils::Vec2};
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
     /// // There's a `Vec2` type you can use if you wish
@@ -248,7 +257,7 @@ impl Sprite {
     /// Performs the event [`Color`] to a `Sprite`
     ///
     /// ```
-    /// use osb::{ Sprite, Easing, utils::Color };
+    /// use osb::{Sprite, Easing, utils::Color};
     ///
     /// let mut sprite = Sprite::new("res/sprite.png");
     /// // There's a `Color` type you can use if you wish
@@ -265,6 +274,57 @@ impl Sprite {
     {
         let mut event = args.into();
         add_event!(self, event, self.events.color_);
+    }
+
+    /// Performs the event [`HFlip`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{Sprite, Easing, utils::Vec2};
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.hflip_((0, 1000));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
+    pub fn hflip_<T>(&mut self, args: T)
+    where
+        T: Into<HFlip>,
+    {
+        let mut event = args.into();
+        add_event!(self, event, self.events.hflip_);
+    }
+
+    /// Performs the event [`VFlip`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{Sprite, Easing, utils::Vec2};
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.vflip_((0, 1000));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
+    pub fn vflip_<T>(&mut self, args: T)
+    where
+        T: Into<VFlip>,
+    {
+        let mut event = args.into();
+        add_event!(self, event, self.events.vflip_);
+    }
+
+    /// Performs the event [`Additive`] to a `Sprite`
+    ///
+    /// ```
+    /// use osb::{Sprite, Easing, utils::Vec2};
+    ///
+    /// let mut sprite = Sprite::new("res/sprite.png");
+    /// sprite.additive_((0, 1000));
+    /// // Please refer to the trait implementations of the event to see everything you can do
+    /// ```
+    pub fn additive_<T>(&mut self, args: T)
+    where
+        T: Into<Additive>,
+    {
+        let mut event = args.into();
+        add_event!(self, event, self.events.additive_);
     }
 
     /// Returns the initial X position of a `Sprite`
