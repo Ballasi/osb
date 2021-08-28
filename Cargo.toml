@@ -1,6 +1,6 @@
 [package]
 name = "osb"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Thomas Ballasi <rust@ballasi.com>"]
 edition = "2018"
 description = "A fast, fully-fledged, scalable and secure implementation of the .osb storyboard file format"
