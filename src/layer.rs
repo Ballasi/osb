@@ -8,19 +8,6 @@
 
 use std::fmt;
 
-#[cfg(test)]
-mod tests {
-    use crate::Layer;
-
-    #[test]
-    fn origin() {
-        assert_eq!(format!("{}", Layer::Background), "Background");
-        assert_eq!(format!("{}", Layer::Fail), "Fail");
-        assert_eq!(format!("{}", Layer::Pass), "Pass");
-        assert_eq!(format!("{}", Layer::Foreground), "Foreground");
-    }
-}
-
 /// `Layer`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/General_Rules#layers)
 #[derive(Clone,Copy,Debug,PartialEq)]
 pub enum Layer {
@@ -42,5 +29,18 @@ impl fmt::Display for Layer {
                 Layer::Foreground => "Foreground",
             }
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Layer;
+
+    #[test]
+    fn origin() {
+        assert_eq!(format!("{}", Layer::Background), "Background");
+        assert_eq!(format!("{}", Layer::Fail), "Fail");
+        assert_eq!(format!("{}", Layer::Pass), "Pass");
+        assert_eq!(format!("{}", Layer::Foreground), "Foreground");
     }
 }

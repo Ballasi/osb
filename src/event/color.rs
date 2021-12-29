@@ -10,27 +10,6 @@ use crate::easing::Easing;
 use crate::utils;
 use crate::Event;
 
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, Easing};
-
-    #[test]
-    fn to_line_static() {
-        let mut color_event_depth: Color = (100, 0, 0, 0).into();
-        color_event_depth.set_depth(2);
-        assert_eq!(color_event_depth.to_line(), "   C,0,100,,0,0,0");
-    }
-
-    #[test]
-    fn to_line_dynamic() {
-        let color_event: Color = (0, 1000, 0, 0, 0, 255, 255, 255).into();
-        assert_eq!(color_event.to_line(), " C,0,0,1000,0,0,0,255,255,255");
-
-        let color_event_easing: Color = (Easing::QuadOut, 0, 1000, 0, 0, 0, 255, 255, 255).into();
-        assert_eq!(color_event_easing.to_line(), " C,4,0,1000,0,0,0,255,255,255");
-    }
-}
-
 /// `Color` event
 pub enum Color {
     Static(usize, i32, utils::Color),
@@ -238,5 +217,26 @@ impl Into<Color> for (Easing, i32, i32, i32, i32, i32, i32, i32, i32) {
             utils::Color::from(self.3, self.4, self.5),
             utils::Color::from(self.6, self.7, self.8),
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, Easing};
+
+    #[test]
+    fn to_line_static() {
+        let mut color_event_depth: Color = (100, 0, 0, 0).into();
+        color_event_depth.set_depth(2);
+        assert_eq!(color_event_depth.to_line(), "   C,0,100,,0,0,0");
+    }
+
+    #[test]
+    fn to_line_dynamic() {
+        let color_event: Color = (0, 1000, 0, 0, 0, 255, 255, 255).into();
+        assert_eq!(color_event.to_line(), " C,0,0,1000,0,0,0,255,255,255");
+
+        let color_event_easing: Color = (Easing::QuadOut, 0, 1000, 0, 0, 0, 255, 255, 255).into();
+        assert_eq!(color_event_easing.to_line(), " C,4,0,1000,0,0,0,255,255,255");
     }
 }

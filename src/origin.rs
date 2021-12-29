@@ -8,24 +8,6 @@
 
 use std::fmt;
 
-#[cfg(test)]
-mod tests {
-    use crate::Origin;
-
-    #[test]
-    fn origin() {
-        assert_eq!(format!("{}", Origin::TopLeft), "TopLeft");
-        assert_eq!(format!("{}", Origin::TopCentre), "TopCentre");
-        assert_eq!(format!("{}", Origin::TopRight), "TopRight");
-        assert_eq!(format!("{}", Origin::CentreLeft), "CentreLeft");
-        assert_eq!(format!("{}", Origin::Centre), "Centre");
-        assert_eq!(format!("{}", Origin::CentreRight), "CentreRight");
-        assert_eq!(format!("{}", Origin::BottomLeft), "BottomLeft");
-        assert_eq!(format!("{}", Origin::BottomCentre), "BottomCentre");
-        assert_eq!(format!("{}", Origin::BottomRight), "BottomRight");
-    }
-}
-
 /// `Origin`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/Objects)
 #[derive(Clone,Copy,Debug,PartialEq)]
 pub enum Origin {
@@ -57,5 +39,23 @@ impl fmt::Display for Origin {
                 Origin::BottomRight => "BottomRight",
             }
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Origin;
+
+    #[test]
+    fn origin() {
+        assert_eq!(format!("{}", Origin::TopLeft), "TopLeft");
+        assert_eq!(format!("{}", Origin::TopCentre), "TopCentre");
+        assert_eq!(format!("{}", Origin::TopRight), "TopRight");
+        assert_eq!(format!("{}", Origin::CentreLeft), "CentreLeft");
+        assert_eq!(format!("{}", Origin::Centre), "Centre");
+        assert_eq!(format!("{}", Origin::CentreRight), "CentreRight");
+        assert_eq!(format!("{}", Origin::BottomLeft), "BottomLeft");
+        assert_eq!(format!("{}", Origin::BottomCentre), "BottomCentre");
+        assert_eq!(format!("{}", Origin::BottomRight), "BottomRight");
     }
 }
