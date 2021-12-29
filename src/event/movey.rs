@@ -1,47 +1,6 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 use crate::easing::Easing;
 use crate::utils::Number;
 use crate::Event;
-
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, Easing};
-
-    #[test]
-    fn to_line_static() {
-        let movey_event: MoveY = (0, 240).into();
-        assert_eq!(movey_event.to_line(), " MY,0,0,,240");
-
-        let mut movey_event_depth: MoveY = (0, 240).into();
-        movey_event_depth.set_depth(2);
-        assert_eq!(movey_event_depth.to_line(), "   MY,0,0,,240");
-    }
-
-    #[test]
-    fn to_line_dynamic() {
-        let movey_event: MoveY = (0, 1000, 0, 240).into();
-        assert_eq!(movey_event.to_line(), " MY,0,0,1000,0,240");
-
-        let movey_event_easing: MoveY = (Easing::QuadOut, 0, 1000, 0, 240).into();
-        assert_eq!(movey_event_easing.to_line(), " MY,4,0,1000,0,240");
-    }
-
-    #[test]
-    fn to_line_dynamic_float() {
-        let movey_event: MoveY = (0, 1000, 0.25, 240.75).into();
-        assert_eq!(movey_event.to_line(), " MY,0,0,1000,0.25,240.75");
-
-        let movey_event_easing: MoveY = (Easing::QuadOut, 0, 1000, 0.25, 240.75).into();
-        assert_eq!(movey_event_easing.to_line(), " MY,4,0,1000,0.25,240.75");
-    }
-}
 
 /// `MoveY` event
 pub enum MoveY {
@@ -175,5 +134,38 @@ where
 {
     fn into(self) -> MoveY {
         MoveY::Dynamic(0, self.0, self.1, self.2, self.3.into(), self.4.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, Easing};
+
+    #[test]
+    fn to_line_static() {
+        let movey_event: MoveY = (0, 240).into();
+        assert_eq!(movey_event.to_line(), " MY,0,0,,240");
+
+        let mut movey_event_depth: MoveY = (0, 240).into();
+        movey_event_depth.set_depth(2);
+        assert_eq!(movey_event_depth.to_line(), "   MY,0,0,,240");
+    }
+
+    #[test]
+    fn to_line_dynamic() {
+        let movey_event: MoveY = (0, 1000, 0, 240).into();
+        assert_eq!(movey_event.to_line(), " MY,0,0,1000,0,240");
+
+        let movey_event_easing: MoveY = (Easing::QuadOut, 0, 1000, 0, 240).into();
+        assert_eq!(movey_event_easing.to_line(), " MY,4,0,1000,0,240");
+    }
+
+    #[test]
+    fn to_line_dynamic_float() {
+        let movey_event: MoveY = (0, 1000, 0.25, 240.75).into();
+        assert_eq!(movey_event.to_line(), " MY,0,0,1000,0.25,240.75");
+
+        let movey_event_easing: MoveY = (Easing::QuadOut, 0, 1000, 0.25, 240.75).into();
+        assert_eq!(movey_event_easing.to_line(), " MY,4,0,1000,0.25,240.75");
     }
 }

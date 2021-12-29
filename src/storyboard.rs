@@ -1,29 +1,5 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 use crate::{Layer, Module};
 use std::io::{self, Write};
-
-#[cfg(test)]
-mod tests {
-    use crate::{Layer, Module, Storyboard};
-
-    #[test]
-    fn modules() {
-        let mut sb = Storyboard::new();
-        let fail_module = Module::new(Layer::Fail);
-        let pass_module = Module::new(Layer::Pass);
-        let foreground_module = Module::new(Layer::Foreground);
-        sb.push(fail_module);
-        sb.push(pass_module);
-        sb.push(foreground_module);
-    }
-}
 
 /// What defines a storyboard
 ///
@@ -117,5 +93,21 @@ impl fmt::Display for Storyboard {
         writeln!(f, "{}", modules_to_str(&self.foreground_modules))?;
         writeln!(f, "//Storyboard Layer 4 (Overlay)")?;
         writeln!(f, "//Storyboard Sound Samples")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Layer, Module, Storyboard};
+
+    #[test]
+    fn modules() {
+        let mut sb = Storyboard::new();
+        let fail_module = Module::new(Layer::Fail);
+        let pass_module = Module::new(Layer::Pass);
+        let foreground_module = Module::new(Layer::Foreground);
+        sb.push(fail_module);
+        sb.push(pass_module);
+        sb.push(foreground_module);
     }
 }
