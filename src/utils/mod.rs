@@ -7,11 +7,11 @@
 // except according to those terms.
 
 mod color;
+mod interval_map;
 mod number;
 mod vec2;
-mod interval_map;
 
 pub use color::*;
+pub use interval_map::*;
 pub use number::*;
 pub use vec2::*;
-pub use interval_map::*;

@@ -8,8 +8,8 @@
 
 use crate::utils::Number;
 use std::error::Error;
-use std::fmt;
 use std::f32::consts::PI;
+use std::fmt;
 
 #[cfg(test)]
 mod tests {
@@ -169,7 +169,10 @@ pub enum EasingParsingError {
 
 impl fmt::Display for EasingParsingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Given easing ID does not correspond to any existing easing")
+        write!(
+            f,
+            "Given easing ID does not correspond to any existing easing"
+        )
     }
 }
 

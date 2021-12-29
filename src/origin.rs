@@ -27,7 +27,7 @@ mod tests {
 }
 
 /// `Origin`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/Objects)
-#[derive(Clone,Copy,Debug,PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Origin {
     TopLeft,
     TopCentre,

@@ -22,7 +22,7 @@ mod tests {
 }
 
 /// `Layer`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/General_Rules#layers)
-#[derive(Clone,Copy,Debug,PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Layer {
     Background,
     Fail,
