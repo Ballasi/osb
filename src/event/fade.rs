@@ -11,39 +11,6 @@ use crate::easing::Easing;
 use crate::utils::Number;
 use crate::Event;
 
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, Easing};
-
-    #[test]
-    fn to_line_static() {
-        let fade_event: Fade = (0, 1).into();
-        assert_eq!(fade_event.to_line(), " F,0,0,,1");
-
-        let mut fade_event_depth: Fade = (0, 1).into();
-        fade_event_depth.set_depth(2);
-        assert_eq!(fade_event_depth.to_line(), "   F,0,0,,1");
-    }
-
-    #[test]
-    fn to_line_dynamic() {
-        let fade_event: Fade = (0, 1000, 0, 1).into();
-        assert_eq!(fade_event.to_line(), " F,0,0,1000,0,1");
-
-        let fade_event_easing: Fade = (Easing::QuadOut, 0, 1000, 0, 1).into();
-        assert_eq!(fade_event_easing.to_line(), " F,4,0,1000,0,1");
-    }
-
-    #[test]
-    fn to_line_dynamic_float() {
-        let fade_event: Fade = (0, 1000, 0.25, 0.75).into();
-        assert_eq!(fade_event.to_line(), " F,0,0,1000,0.25,0.75");
-
-        let fade_event_easing: Fade = (Easing::QuadOut, 0, 1000, 0.25, 0.75).into();
-        assert_eq!(fade_event_easing.to_line(), " F,4,0,1000,0.25,0.75");
-    }
-}
-
 /// `Fade` event
 pub enum Fade {
     Static(usize, i32, Number),
@@ -176,5 +143,38 @@ where
 {
     fn into(self) -> Fade {
         Fade::Dynamic(0, self.0, self.1, self.2, self.3.into(), self.4.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, Easing};
+
+    #[test]
+    fn to_line_static() {
+        let fade_event: Fade = (0, 1).into();
+        assert_eq!(fade_event.to_line(), " F,0,0,,1");
+
+        let mut fade_event_depth: Fade = (0, 1).into();
+        fade_event_depth.set_depth(2);
+        assert_eq!(fade_event_depth.to_line(), "   F,0,0,,1");
+    }
+
+    #[test]
+    fn to_line_dynamic() {
+        let fade_event: Fade = (0, 1000, 0, 1).into();
+        assert_eq!(fade_event.to_line(), " F,0,0,1000,0,1");
+
+        let fade_event_easing: Fade = (Easing::QuadOut, 0, 1000, 0, 1).into();
+        assert_eq!(fade_event_easing.to_line(), " F,4,0,1000,0,1");
+    }
+
+    #[test]
+    fn to_line_dynamic_float() {
+        let fade_event: Fade = (0, 1000, 0.25, 0.75).into();
+        assert_eq!(fade_event.to_line(), " F,0,0,1000,0.25,0.75");
+
+        let fade_event_easing: Fade = (Easing::QuadOut, 0, 1000, 0.25, 0.75).into();
+        assert_eq!(fade_event_easing.to_line(), " F,4,0,1000,0.25,0.75");
     }
 }

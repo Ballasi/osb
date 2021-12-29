@@ -9,22 +9,6 @@
 use crate::{Layer, Module};
 use std::io::{self, Write};
 
-#[cfg(test)]
-mod tests {
-    use crate::{Layer, Module, Storyboard};
-
-    #[test]
-    fn modules() {
-        let mut sb = Storyboard::new();
-        let fail_module = Module::new(Layer::Fail);
-        let pass_module = Module::new(Layer::Pass);
-        let foreground_module = Module::new(Layer::Foreground);
-        sb.push(fail_module);
-        sb.push(pass_module);
-        sb.push(foreground_module);
-    }
-}
-
 /// What defines a storyboard
 ///
 /// The usage of the struct `Storyboard` is a bit different from what you may be used to in other
@@ -117,5 +101,21 @@ impl fmt::Display for Storyboard {
         writeln!(f, "{}", modules_to_str(&self.foreground_modules))?;
         writeln!(f, "//Storyboard Layer 4 (Overlay)")?;
         writeln!(f, "//Storyboard Sound Samples")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Layer, Module, Storyboard};
+
+    #[test]
+    fn modules() {
+        let mut sb = Storyboard::new();
+        let fail_module = Module::new(Layer::Fail);
+        let pass_module = Module::new(Layer::Pass);
+        let foreground_module = Module::new(Layer::Foreground);
+        sb.push(fail_module);
+        sb.push(pass_module);
+        sb.push(foreground_module);
     }
 }

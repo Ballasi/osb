@@ -10,33 +10,6 @@ use crate::easing::Easing;
 use crate::utils::{Number, Vec2};
 use crate::Event;
 
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, utils::Vec2, Easing};
-
-    #[test]
-    fn to_line_static() {
-        let scalevec_event_neg: ScaleVec = (-100, -1, -1).into();
-        assert_eq!(scalevec_event_neg.to_line(), " V,0,-100,,-1,-1");
-
-        let mut scalevec_event_depth: ScaleVec = (100, 1, 0.5).into();
-        scalevec_event_depth.set_depth(2);
-        assert_eq!(scalevec_event_depth.to_line(), "   V,0,100,,1,0.5");
-
-        let scalevec_event_vec2: ScaleVec = (0, 1000, Vec2::new(), Vec2::from(1, 0)).into();
-        assert_eq!(scalevec_event_vec2.to_line(), " V,0,0,1000,0,0,1,0");
-    }
-
-    #[test]
-    fn to_line_dynamic() {
-        let scalevec_event: ScaleVec = (0, 1000, 1, 1, 1, 0).into();
-        assert_eq!(scalevec_event.to_line(), " V,0,0,1000,1,1,1,0");
-
-        let scalevec_event_easing: ScaleVec = (Easing::QuadOut, 0, 1000, 1, 0, 1, 1).into();
-        assert_eq!(scalevec_event_easing.to_line(), " V,4,0,1000,1,0,1,1");
-    }
-}
-
 /// `ScaleVec` event
 pub enum ScaleVec {
     Static(usize, i32, Vec2),
@@ -252,5 +225,32 @@ where
             Vec2::from(self.3, self.4),
             Vec2::from(self.5, self.6),
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, utils::Vec2, Easing};
+
+    #[test]
+    fn to_line_static() {
+        let scalevec_event_neg: ScaleVec = (-100, -1, -1).into();
+        assert_eq!(scalevec_event_neg.to_line(), " V,0,-100,,-1,-1");
+
+        let mut scalevec_event_depth: ScaleVec = (100, 1, 0.5).into();
+        scalevec_event_depth.set_depth(2);
+        assert_eq!(scalevec_event_depth.to_line(), "   V,0,100,,1,0.5");
+
+        let scalevec_event_vec2: ScaleVec = (0, 1000, Vec2::new(), Vec2::from(1, 0)).into();
+        assert_eq!(scalevec_event_vec2.to_line(), " V,0,0,1000,0,0,1,0");
+    }
+
+    #[test]
+    fn to_line_dynamic() {
+        let scalevec_event: ScaleVec = (0, 1000, 1, 1, 1, 0).into();
+        assert_eq!(scalevec_event.to_line(), " V,0,0,1000,1,1,1,0");
+
+        let scalevec_event_easing: ScaleVec = (Easing::QuadOut, 0, 1000, 1, 0, 1, 1).into();
+        assert_eq!(scalevec_event_easing.to_line(), " V,4,0,1000,1,0,1,1");
     }
 }

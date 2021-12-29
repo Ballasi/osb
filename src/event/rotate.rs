@@ -11,39 +11,6 @@ use crate::easing::Easing;
 use crate::utils::Number;
 use crate::Event;
 
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, Easing};
-
-    #[test]
-    fn to_line_static() {
-        let rotate_event_neg: Rotate = (0, -1).into();
-        assert_eq!(rotate_event_neg.to_line(), " R,0,0,,-1");
-
-        let mut rotate_event_depth: Rotate = (0, 1).into();
-        rotate_event_depth.set_depth(2);
-        assert_eq!(rotate_event_depth.to_line(), "   R,0,0,,1");
-    }
-
-    #[test]
-    fn to_line_dynamic() {
-        let rotate_event: Rotate = (0, 1000, 0, 1).into();
-        assert_eq!(rotate_event.to_line(), " R,0,0,1000,0,1");
-
-        let rotate_event_easing: Rotate = (Easing::QuadOut, 0, 1000, 0, 1).into();
-        assert_eq!(rotate_event_easing.to_line(), " R,4,0,1000,0,1");
-    }
-
-    #[test]
-    fn to_line_dynamic_float() {
-        let rotate_event: Rotate = (0, 1000, 0.25, 0.75).into();
-        assert_eq!(rotate_event.to_line(), " R,0,0,1000,0.25,0.75");
-
-        let rotate_event_easing: Rotate = (Easing::QuadOut, 0, 1000, 0.25, 0.75).into();
-        assert_eq!(rotate_event_easing.to_line(), " R,4,0,1000,0.25,0.75");
-    }
-}
-
 /// `Rotate` event
 pub enum Rotate {
     Static(usize, i32, Number),
@@ -176,5 +143,38 @@ where
 {
     fn into(self) -> Rotate {
         Rotate::Dynamic(0, self.0, self.1, self.2, self.3.into(), self.4.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, Easing};
+
+    #[test]
+    fn to_line_static() {
+        let rotate_event_neg: Rotate = (0, -1).into();
+        assert_eq!(rotate_event_neg.to_line(), " R,0,0,,-1");
+
+        let mut rotate_event_depth: Rotate = (0, 1).into();
+        rotate_event_depth.set_depth(2);
+        assert_eq!(rotate_event_depth.to_line(), "   R,0,0,,1");
+    }
+
+    #[test]
+    fn to_line_dynamic() {
+        let rotate_event: Rotate = (0, 1000, 0, 1).into();
+        assert_eq!(rotate_event.to_line(), " R,0,0,1000,0,1");
+
+        let rotate_event_easing: Rotate = (Easing::QuadOut, 0, 1000, 0, 1).into();
+        assert_eq!(rotate_event_easing.to_line(), " R,4,0,1000,0,1");
+    }
+
+    #[test]
+    fn to_line_dynamic_float() {
+        let rotate_event: Rotate = (0, 1000, 0.25, 0.75).into();
+        assert_eq!(rotate_event.to_line(), " R,0,0,1000,0.25,0.75");
+
+        let rotate_event_easing: Rotate = (Easing::QuadOut, 0, 1000, 0.25, 0.75).into();
+        assert_eq!(rotate_event_easing.to_line(), " R,4,0,1000,0.25,0.75");
     }
 }

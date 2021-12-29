@@ -1,46 +1,6 @@
 use std::fmt;
 use std::ops::{Add, Neg, Sub};
 
-#[cfg(test)]
-mod tests {
-    use crate::utils::Number;
-
-    #[test]
-    fn add() {
-        let i1 = Number::Int(1);
-        let i2 = Number::Int(2);
-        let f1 = Number::Float(0.5);
-        let f2 = Number::Float(1.5);
-
-        assert_eq!(i1 + i2, Number::Int(3));
-        assert_eq!(f1 + i2, Number::Float(2.5));
-        assert_eq!(i2 + f2, Number::Float(3.5));
-        assert_eq!(f1 + f2, Number::Float(2.));
-    }
-
-    #[test]
-    fn sub() {
-        let i1 = Number::Int(1);
-        let i2 = Number::Int(2);
-        let f1 = Number::Float(0.5);
-        let f2 = Number::Float(1.5);
-
-        assert_eq!(i2 - i1, Number::Int(1));
-        assert_eq!(i2 - f1, Number::Float(1.5));
-        assert_eq!(i2 - f2, Number::Float(0.5));
-        assert_eq!(f2 - f1, Number::Float(1.));
-    }
-
-    #[test]
-    fn neg() {
-        let i1 = Number::Int(1);
-        let f1 = Number::Float(0.5);
-
-        assert_eq!(-i1, Number::Int(-1));
-        assert_eq!(-f1, Number::Float(-0.5));
-    }
-}
-
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Number {
     Int(i32),
@@ -122,5 +82,45 @@ impl Neg for Number {
             Number::Int(val) => Number::Int(-val),
             Number::Float(val) => Number::Float(-val),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::utils::Number;
+
+    #[test]
+    fn add() {
+        let i1 = Number::Int(1);
+        let i2 = Number::Int(2);
+        let f1 = Number::Float(0.5);
+        let f2 = Number::Float(1.5);
+
+        assert_eq!(i1 + i2, Number::Int(3));
+        assert_eq!(f1 + i2, Number::Float(2.5));
+        assert_eq!(i2 + f2, Number::Float(3.5));
+        assert_eq!(f1 + f2, Number::Float(2.));
+    }
+
+    #[test]
+    fn sub() {
+        let i1 = Number::Int(1);
+        let i2 = Number::Int(2);
+        let f1 = Number::Float(0.5);
+        let f2 = Number::Float(1.5);
+
+        assert_eq!(i2 - i1, Number::Int(1));
+        assert_eq!(i2 - f1, Number::Float(1.5));
+        assert_eq!(i2 - f2, Number::Float(0.5));
+        assert_eq!(f2 - f1, Number::Float(1.));
+    }
+
+    #[test]
+    fn neg() {
+        let i1 = Number::Int(1);
+        let f1 = Number::Float(0.5);
+
+        assert_eq!(-i1, Number::Int(-1));
+        assert_eq!(-f1, Number::Float(-0.5));
     }
 }

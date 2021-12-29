@@ -9,21 +9,6 @@
 use crate::easing::Easing;
 use crate::Event;
 
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, Easing};
-
-    #[test]
-    fn to_line() {
-        let additive_event: Additive = (0, 1000).into();
-        assert_eq!(additive_event.to_line(), " P,0,0,1000,A");
-
-        let mut additive_event_depth: Additive = (Easing::QuadOut, 0, 1000).into();
-        additive_event_depth.set_depth(2);
-        assert_eq!(additive_event_depth.to_line(), "   P,4,0,1000,A");
-    }
-}
-
 /// `Additive` event
 pub enum Additive {
     Dynamic(usize, Easing, i32, i32),
@@ -99,5 +84,20 @@ impl Into<Additive> for (i32, i32) {
 impl Into<Additive> for (Easing, i32, i32) {
     fn into(self) -> Additive {
         Additive::Dynamic(0, self.0, self.1, self.2)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, Easing};
+
+    #[test]
+    fn to_line() {
+        let additive_event: Additive = (0, 1000).into();
+        assert_eq!(additive_event.to_line(), " P,0,0,1000,A");
+
+        let mut additive_event_depth: Additive = (Easing::QuadOut, 0, 1000).into();
+        additive_event_depth.set_depth(2);
+        assert_eq!(additive_event_depth.to_line(), "   P,4,0,1000,A");
     }
 }

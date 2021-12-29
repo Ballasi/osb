@@ -1,14 +1,3 @@
-#[cfg(test)]
-mod tests {
-    use crate::utils::Color;
-
-    #[test]
-    fn out_of_range() {
-        assert_eq!(Color::from(-1, -200, -42), Color::black());
-        assert_eq!(Color::from(300, 300, 300), Color::white());
-    }
-}
-
 /// A color type
 ///
 /// Contains an `r`, `g` and `b` value that ranges between 0 and 255
@@ -140,5 +129,16 @@ impl Color {
             g: 255,
             b: 255,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::utils::Color;
+
+    #[test]
+    fn out_of_range() {
+        assert_eq!(Color::from(-1, -200, -42), Color::black());
+        assert_eq!(Color::from(300, 300, 300), Color::white());
     }
 }
