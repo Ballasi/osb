@@ -100,3 +100,22 @@ impl Storyboard {
         stdout.write_all(b"//Storyboard Sound Samples\n")
     }
 }
+
+use std::fmt;
+
+impl fmt::Display for Storyboard {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "[Events]")?;
+        writeln!(f, "//Background and Video events")?;
+        writeln!(f, "//Storyboard Layer 0 (Background)")?;
+        writeln!(f, "{}", modules_to_str(&self.background_modules))?;
+        writeln!(f, "//Storyboard Layer 1 (Fail)")?;
+        writeln!(f, "{}", modules_to_str(&self.fail_modules))?;
+        writeln!(f, "//Storyboard Layer 2 (Pass)")?;
+        writeln!(f, "{}", modules_to_str(&self.pass_modules))?;
+        writeln!(f, "//Storyboard Layer 3 (Foreground)")?;
+        writeln!(f, "{}", modules_to_str(&self.foreground_modules))?;
+        writeln!(f, "//Storyboard Layer 4 (Overlay)")?;
+        writeln!(f, "//Storyboard Sound Samples")
+    }
+}
