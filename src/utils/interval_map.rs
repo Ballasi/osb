@@ -28,7 +28,12 @@ impl<K, V> IntervalMap<K, V>
 			Ok(position) => position,
 			Err(position) => {
 				self.points.insert(
-					position, (range.start, Vec::new())
+					position, (
+                        range.start,
+                        self.points.get(position.wrapping_sub(1))
+                            .map(|(_, values)| values.clone())
+                            .unwrap_or_default(),
+                    )
 				);
 				position
 			},
@@ -61,4 +66,33 @@ impl<K, V> IntervalMap<K, V>
 			.map(|point| &point.1[..]).unwrap_or(&[])
 			.iter()
 	}
+}
+
+#[cfg(test)]
+mod tests {
+    use super::IntervalMap;
+
+    #[test]
+    fn basic() {
+        let mut interval_map = IntervalMap::new();
+
+        interval_map.push(10..50, 1);
+        interval_map.push(30..55, 2);
+
+        assert_eq!(interval_map.get(&0).next(), None);
+        assert_eq!(interval_map.get(&100).next(), None);
+
+        let mut result = interval_map.get(&20);
+        assert_eq!(result.next(), Some(&1));
+        assert_eq!(result.next(), None);
+
+        let mut result = interval_map.get(&53);
+        assert_eq!(result.next(), Some(&2));
+        assert_eq!(result.next(), None);
+
+        let mut result = interval_map.get(&40);
+        assert_eq!(result.next(), Some(&1));
+        assert_eq!(result.next(), Some(&2));
+        assert_eq!(result.next(), None);
+    }
 }
