@@ -1,7 +1,7 @@
 use crate::utils::Number;
 use std::error::Error;
-use std::fmt;
 use std::f32::consts::PI;
+use std::fmt;
 
 /// `Easing`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/Commands)
 ///
@@ -67,7 +67,10 @@ pub enum EasingParsingError {
 
 impl fmt::Display for EasingParsingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Given easing ID does not correspond to any existing easing")
+        write!(
+            f,
+            "Given easing ID does not correspond to any existing easing"
+        )
     }
 }
 
