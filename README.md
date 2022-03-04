@@ -6,7 +6,8 @@
 <div align="center">
   <a href="https://crates.io/crates/osb"><img src="https://img.shields.io/crates/v/osb"/></a>
   <a href="https://crates.io/crates/osb"><img src="https://img.shields.io/crates/d/osb"/></a>
-  <a href="https://github.com/Ballasi/osb/actions"><img src="https://img.shields.io/gitlab/pipeline/Asperatus/osb/master"/></a>
+  <a href="https://github.com/Ballasi/osb/actions"><img src="https://img.shields.io/github/workflow/status/Ballasi/osb/Tests%20and%20code%20coverage"/></a>
+  <a href="https://docs.rs/osb"><img src="https://img.shields.io/docsrs/osb"/></a>
   <a href="https://github.com/Ballasi/osb"><img src="https://img.shields.io/gitlab/coverage/Asperatus/osb/master"/></a>
   <a href="#license"><img src="https://img.shields.io/crates/l/osb"/></a>
 </div>
