@@ -1,4 +1,4 @@
-/// Quickly in which interval a value is present
+/// Data structure to associate keys of an interval type to a certain value
 pub struct IntervalMap<K, V> {
     points: Vec<(K, Vec<V>)>,
 }
@@ -17,10 +17,22 @@ where
     K: Ord,
     V: Clone,
 {
+    /// Initializes a `IntervalMap`
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Adds a value to our `IntervalMap`.
+    ///
+    /// In the following example, our value is of integer type, but
+    /// it can be anything type that implements the trait `Clone`.
+    ///
+    /// Usage:
+    /// ```
+    /// use osb::utils::IntervalMap;
+    /// let mut interval_map = IntervalMap::new();
+    /// interval_map.push(10..50, 1);
+    /// ```
     pub fn push(&mut self, range: Range<K>, value: V) {
         let position = match self
             .points
@@ -56,6 +68,24 @@ where
         self.points.push((range.end, Vec::new()))
     }
 
+    /// Retrieve all of the values that is inside an interval
+    ///
+    /// Usage:
+    /// ```
+    /// use osb::utils::IntervalMap;
+    /// let mut interval_map = IntervalMap::new();
+    /// interval_map.push(10..50, 1);
+    /// interval_map.push(30..50, 42);
+    ///
+    /// let mut result1 = interval_map.get(&20);
+    /// assert_eq!(result1.next(), Some(&1));
+    /// assert_eq!(result1.next(), None);
+    ///
+    /// let mut result2 = interval_map.get(&40);
+    /// assert_eq!(result2.next(), Some(&1));
+    /// assert_eq!(result2.next(), Some(&42));
+    /// assert_eq!(result2.next(), None);
+    /// ```
     pub fn get(&self, key: &K) -> std::slice::Iter<V> {
         let index = match self
             .points
