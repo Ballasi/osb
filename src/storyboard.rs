@@ -80,19 +80,27 @@ impl Storyboard {
 use std::fmt;
 
 impl fmt::Display for Storyboard {
+    /// Formats the value using the given formatter
+    ///
+    /// Usage:
+    /// ```
+    /// use osb::Storyboard;
+    /// let mut sb = Storyboard::new();
+    /// println!("{}", sb);
+    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(f, "[Events]")?;
         writeln!(f, "//Background and Video events")?;
         writeln!(f, "//Storyboard Layer 0 (Background)")?;
-        writeln!(f, "{}", modules_to_str(&self.background_modules))?;
+        write!(f, "{}", modules_to_str(&self.background_modules))?;
         writeln!(f, "//Storyboard Layer 1 (Fail)")?;
-        writeln!(f, "{}", modules_to_str(&self.fail_modules))?;
+        write!(f, "{}", modules_to_str(&self.fail_modules))?;
         writeln!(f, "//Storyboard Layer 2 (Pass)")?;
-        writeln!(f, "{}", modules_to_str(&self.pass_modules))?;
+        write!(f, "{}", modules_to_str(&self.pass_modules))?;
         writeln!(f, "//Storyboard Layer 3 (Foreground)")?;
-        writeln!(f, "{}", modules_to_str(&self.foreground_modules))?;
+        write!(f, "{}", modules_to_str(&self.foreground_modules))?;
         writeln!(f, "//Storyboard Layer 4 (Overlay)")?;
-        writeln!(f, "//Storyboard Sound Samples")
+        write!(f, "//Storyboard Sound Samples")
     }
 }
 
