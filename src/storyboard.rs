@@ -11,6 +11,7 @@ pub struct Storyboard {
     fail_modules: Vec<Module>,
     pass_modules: Vec<Module>,
     foreground_modules: Vec<Module>,
+    overlay_modules: Vec<Module>,
 }
 
 fn modules_to_str(modules: &Vec<Module>) -> String {
@@ -29,6 +30,7 @@ impl Storyboard {
             fail_modules: vec![],
             pass_modules: vec![],
             foreground_modules: vec![],
+            overlay_modules: vec![],
         }
     }
 
@@ -47,6 +49,7 @@ impl Storyboard {
             Layer::Fail => self.fail_modules.push(module),
             Layer::Pass => self.pass_modules.push(module),
             Layer::Foreground => self.foreground_modules.push(module),
+            Layer::Overlay => self.overlay_modules.push(module),
         }
     }
 
@@ -73,6 +76,7 @@ impl Storyboard {
         stdout.write_all(b"//Storyboard Layer 3 (Foreground)\n")?;
         stdout.write_all(modules_to_str(&self.foreground_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Layer 4 (Overlay)\n")?;
+        stdout.write_all(modules_to_str(&self.overlay_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Sound Samples\n")
     }
 }
@@ -100,6 +104,7 @@ impl fmt::Display for Storyboard {
         writeln!(f, "//Storyboard Layer 3 (Foreground)")?;
         write!(f, "{}", modules_to_str(&self.foreground_modules))?;
         writeln!(f, "//Storyboard Layer 4 (Overlay)")?;
+        write!(f, "{}", modules_to_str(&self.overlay_modules))?;
         write!(f, "//Storyboard Sound Samples")
     }
 }
@@ -114,8 +119,10 @@ mod tests {
         let fail_module = Module::new(Layer::Fail);
         let pass_module = Module::new(Layer::Pass);
         let foreground_module = Module::new(Layer::Foreground);
+        let overlay_module = Module::new(Layer::Overlay);
         sb.push(fail_module);
         sb.push(pass_module);
         sb.push(foreground_module);
+        sb.push(overlay_module);
     }
 }
