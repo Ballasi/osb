@@ -146,6 +146,9 @@ impl Sprite {
         args.into()
     }
 
+    /// Initializes a new `Sprite` implementing an `Animation`
+    ///
+    /// See [trait implementations](#trait-implementations) to see how you can create a animation sprite
     pub fn new_animation<T>(
         args: T,
         frame_count: u32,
@@ -162,6 +165,16 @@ impl Sprite {
             loop_type,
         });
         sprite
+    }
+
+    /// Implement an `Animation` to a `Sprite`
+    ///
+    pub fn to_animation(&mut self, frame_count: u32, frame_delay: u32, loop_type: LoopType) {
+        self.animation = Some(Animation {
+            frame_count,
+            frame_delay,
+            loop_type,
+        });
     }
 
     /// Performs the event [`Move`] to a `Sprite`
