@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use core::fmt;
+
 use crate::event::*;
 use crate::utils::{Number, Vec2};
 use crate::Layer;
@@ -23,6 +25,20 @@ struct EventCollection {
     hflip_: Vec<HFlip>,
     vflip_: Vec<VFlip>,
     additive_: Vec<Additive>,
+}
+
+pub enum LoopType {
+    LoopOnce,
+    LoopForever,
+}
+
+impl fmt::Display for LoopType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            LoopType::LoopOnce => write!(f, "LoopOnce"),
+            LoopType::LoopForever => write!(f, "LoopForever"),
+        }
+    }
 }
 
 fn events_to_str<T>(events: &Vec<T>) -> String
@@ -71,6 +87,12 @@ impl EventCollection {
     }
 }
 
+pub struct Animation {
+    frame_count: u32,
+    frame_delay: u32,
+    loop_type: LoopType,
+}
+
 /// The struct corresponding to sprites
 pub struct Sprite {
     events: EventCollection,
@@ -81,6 +103,7 @@ pub struct Sprite {
     origin: Origin,
     start_time: Option<i32>,
     end_time: Option<i32>,
+    animation: Option<Animation>,
 }
 
 // Adding an event to a sprite
@@ -121,6 +144,24 @@ impl Sprite {
         T: Into<Sprite>,
     {
         args.into()
+    }
+
+    pub fn new_animation<T>(
+        args: T,
+        frame_count: u32,
+        frame_delay: u32,
+        loop_type: LoopType,
+    ) -> Self
+    where
+        T: Into<Sprite>,
+    {
+        let mut sprite = args.into() as Sprite;
+        sprite.animation = Some(Animation {
+            frame_count,
+            frame_delay,
+            loop_type,
+        });
+        sprite
     }
 
     /// Performs the event [`Move`] to a `Sprite`
@@ -399,15 +440,33 @@ impl Sprite {
     ///
     /// **Warning**: this method is not meant to be used
     pub fn to_str(&self) -> String {
-        format!(
-            "Sprite,{},{},\"{}\",{},{}\n{}",
-            self.layer,
-            self.origin,
-            self.path,
-            self.pos.x,
-            self.pos.y,
-            self.events.to_str()
-        )
+        match &self.animation {
+            Some(animation) => {
+                return format!(
+                    "Animation,{},{},\"{}\",{},{},{},{},{}\n{}",
+                    self.layer,
+                    self.origin,
+                    self.path,
+                    self.pos.x,
+                    self.pos.y,
+                    animation.frame_count,
+                    animation.frame_delay,
+                    animation.loop_type.to_string(),
+                    self.events.to_str()
+                );
+            }
+            None => {
+                return format!(
+                    "Sprite,{},{},\"{}\",{},{}\n{}",
+                    self.layer,
+                    self.origin,
+                    self.path,
+                    self.pos.x,
+                    self.pos.y,
+                    self.events.to_str()
+                );
+            }
+        }
     }
 
     /// Sets the [`Layer`] of the `Sprite`
@@ -437,6 +496,7 @@ impl Into<Sprite> for String {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -460,6 +520,7 @@ impl Into<Sprite> for &str {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -484,6 +545,7 @@ impl Into<Sprite> for (Origin, String) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -508,6 +570,7 @@ impl Into<Sprite> for (Origin, &str) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -532,6 +595,7 @@ impl Into<Sprite> for (String, Vec2) {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -561,6 +625,7 @@ where
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -585,6 +650,7 @@ impl Into<Sprite> for (&str, Vec2) {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -614,6 +680,7 @@ where
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -639,6 +706,7 @@ impl Into<Sprite> for (Origin, String, Vec2) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -669,6 +737,7 @@ where
             origin: self.0,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -694,6 +763,7 @@ impl Into<Sprite> for (Origin, &str, Vec2) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            animation: None,
         }
     }
 }
@@ -724,6 +794,21 @@ where
             origin: self.0,
             start_time: None,
             end_time: None,
+            animation: None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{LoopType, Sprite};
+
+    #[test]
+    fn animation() {
+        let sprite = Sprite::new_animation("sb/sprite.jpg", 10, 10, LoopType::LoopOnce);
+        assert_eq!(
+            "Animation,Background,Centre,\"sb/sprite.jpg\",320,240,10,10,LoopOnce\n",
+            sprite.to_str()
+        );
     }
 }
