@@ -1,47 +1,6 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 use crate::easing::Easing;
 use crate::utils::Number;
 use crate::Event;
-
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, Easing};
-
-    #[test]
-    fn to_line_static() {
-        let movex_event: MoveX = (0, 320).into();
-        assert_eq!(movex_event.to_line(), " MX,0,0,,320");
-
-        let mut movex_event_depth: MoveX = (0, 320).into();
-        movex_event_depth.set_depth(2);
-        assert_eq!(movex_event_depth.to_line(), "   MX,0,0,,320");
-    }
-
-    #[test]
-    fn to_line_dynamic() {
-        let movex_event: MoveX = (0, 1000, 0, 320).into();
-        assert_eq!(movex_event.to_line(), " MX,0,0,1000,0,320");
-
-        let movex_event_easing: MoveX = (Easing::QuadOut, 0, 1000, 0, 320).into();
-        assert_eq!(movex_event_easing.to_line(), " MX,4,0,1000,0,320");
-    }
-
-    #[test]
-    fn to_line_dynamic_float() {
-        let movex_event: MoveX = (0, 1000, 0.25, 320.75).into();
-        assert_eq!(movex_event.to_line(), " MX,0,0,1000,0.25,320.75");
-
-        let movex_event_easing: MoveX = (Easing::QuadOut, 0, 1000, 0.25, 320.75).into();
-        assert_eq!(movex_event_easing.to_line(), " MX,4,0,1000,0.25,320.75");
-    }
-}
 
 /// `MoveX` event
 pub enum MoveX {
@@ -175,5 +134,38 @@ where
 {
     fn into(self) -> MoveX {
         MoveX::Dynamic(0, self.0, self.1, self.2, self.3.into(), self.4.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, Easing};
+
+    #[test]
+    fn to_line_static() {
+        let movex_event: MoveX = (0, 320).into();
+        assert_eq!(movex_event.to_line(), " MX,0,0,,320");
+
+        let mut movex_event_depth: MoveX = (0, 320).into();
+        movex_event_depth.set_depth(2);
+        assert_eq!(movex_event_depth.to_line(), "   MX,0,0,,320");
+    }
+
+    #[test]
+    fn to_line_dynamic() {
+        let movex_event: MoveX = (0, 1000, 0, 320).into();
+        assert_eq!(movex_event.to_line(), " MX,0,0,1000,0,320");
+
+        let movex_event_easing: MoveX = (Easing::QuadOut, 0, 1000, 0, 320).into();
+        assert_eq!(movex_event_easing.to_line(), " MX,4,0,1000,0,320");
+    }
+
+    #[test]
+    fn to_line_dynamic_float() {
+        let movex_event: MoveX = (0, 1000, 0.25, 320.75).into();
+        assert_eq!(movex_event.to_line(), " MX,0,0,1000,0.25,320.75");
+
+        let movex_event_easing: MoveX = (Easing::QuadOut, 0, 1000, 0.25, 320.75).into();
+        assert_eq!(movex_event_easing.to_line(), " MX,4,0,1000,0.25,320.75");
     }
 }

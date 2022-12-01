@@ -1,29 +1,5 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 use crate::{Layer, Module};
 use std::io::{self, Write};
-
-#[cfg(test)]
-mod tests {
-    use crate::{Layer, Module, Storyboard};
-
-    #[test]
-    fn modules() {
-        let mut sb = Storyboard::new();
-        let fail_module = Module::new(Layer::Fail);
-        let pass_module = Module::new(Layer::Pass);
-        let foreground_module = Module::new(Layer::Foreground);
-        sb.push(fail_module);
-        sb.push(pass_module);
-        sb.push(foreground_module);
-    }
-}
 
 /// What defines a storyboard
 ///
@@ -35,6 +11,7 @@ pub struct Storyboard {
     fail_modules: Vec<Module>,
     pass_modules: Vec<Module>,
     foreground_modules: Vec<Module>,
+    overlay_modules: Vec<Module>,
 }
 
 fn modules_to_str(modules: &Vec<Module>) -> String {
@@ -53,6 +30,7 @@ impl Storyboard {
             fail_modules: vec![],
             pass_modules: vec![],
             foreground_modules: vec![],
+            overlay_modules: vec![],
         }
     }
 
@@ -71,6 +49,7 @@ impl Storyboard {
             Layer::Fail => self.fail_modules.push(module),
             Layer::Pass => self.pass_modules.push(module),
             Layer::Foreground => self.foreground_modules.push(module),
+            Layer::Overlay => self.overlay_modules.push(module),
         }
     }
 
@@ -97,6 +76,53 @@ impl Storyboard {
         stdout.write_all(b"//Storyboard Layer 3 (Foreground)\n")?;
         stdout.write_all(modules_to_str(&self.foreground_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Layer 4 (Overlay)\n")?;
+        stdout.write_all(modules_to_str(&self.overlay_modules).as_bytes())?;
         stdout.write_all(b"//Storyboard Sound Samples\n")
+    }
+}
+
+use std::fmt;
+
+impl fmt::Display for Storyboard {
+    /// Formats the value using the given formatter
+    ///
+    /// Usage:
+    /// ```
+    /// use osb::Storyboard;
+    /// let mut sb = Storyboard::new();
+    /// println!("{}", sb);
+    /// ```
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "[Events]")?;
+        writeln!(f, "//Background and Video events")?;
+        writeln!(f, "//Storyboard Layer 0 (Background)")?;
+        write!(f, "{}", modules_to_str(&self.background_modules))?;
+        writeln!(f, "//Storyboard Layer 1 (Fail)")?;
+        write!(f, "{}", modules_to_str(&self.fail_modules))?;
+        writeln!(f, "//Storyboard Layer 2 (Pass)")?;
+        write!(f, "{}", modules_to_str(&self.pass_modules))?;
+        writeln!(f, "//Storyboard Layer 3 (Foreground)")?;
+        write!(f, "{}", modules_to_str(&self.foreground_modules))?;
+        writeln!(f, "//Storyboard Layer 4 (Overlay)")?;
+        write!(f, "{}", modules_to_str(&self.overlay_modules))?;
+        write!(f, "//Storyboard Sound Samples")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Layer, Module, Storyboard};
+
+    #[test]
+    fn modules() {
+        let mut sb = Storyboard::new();
+        let fail_module = Module::new(Layer::Fail);
+        let pass_module = Module::new(Layer::Pass);
+        let foreground_module = Module::new(Layer::Foreground);
+        let overlay_module = Module::new(Layer::Overlay);
+        sb.push(fail_module);
+        sb.push(pass_module);
+        sb.push(foreground_module);
+        sb.push(overlay_module);
     }
 }

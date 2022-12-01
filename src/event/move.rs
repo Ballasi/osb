@@ -1,41 +1,6 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 use crate::easing::Easing;
 use crate::utils::{Number, Vec2};
 use crate::Event;
-
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, utils::Vec2, Easing};
-
-    #[test]
-    fn to_line_static() {
-        let move_event_neg: Move = (-100, -320, -240).into();
-        assert_eq!(move_event_neg.to_line(), " M,0,-100,,-320,-240");
-
-        let mut move_event_depth: Move = (100, 0, 0).into();
-        move_event_depth.set_depth(2);
-        assert_eq!(move_event_depth.to_line(), "   M,0,100,,0,0");
-
-        let move_event_vec2: Move = (0, 1000, Vec2::new(), Vec2::new()).into();
-        assert_eq!(move_event_vec2.to_line(), " M,0,0,1000,0,0,0,0");
-    }
-
-    #[test]
-    fn to_line_dynamic() {
-        let move_event: Move = (0, 1000, 0, 0, 320, 240).into();
-        assert_eq!(move_event.to_line(), " M,0,0,1000,0,0,320,240");
-
-        let move_event_easing: Move = (Easing::QuadOut, 0, 1000, 0, 0, 320, 240).into();
-        assert_eq!(move_event_easing.to_line(), " M,4,0,1000,0,0,320,240");
-    }
-}
 
 /// `Move` event
 pub enum Move {
@@ -252,5 +217,32 @@ where
             Vec2::from(self.3, self.4),
             Vec2::from(self.5, self.6),
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, utils::Vec2, Easing};
+
+    #[test]
+    fn to_line_static() {
+        let move_event_neg: Move = (-100, -320, -240).into();
+        assert_eq!(move_event_neg.to_line(), " M,0,-100,,-320,-240");
+
+        let mut move_event_depth: Move = (100, 0, 0).into();
+        move_event_depth.set_depth(2);
+        assert_eq!(move_event_depth.to_line(), "   M,0,100,,0,0");
+
+        let move_event_vec2: Move = (0, 1000, Vec2::new(), Vec2::new()).into();
+        assert_eq!(move_event_vec2.to_line(), " M,0,0,1000,0,0,0,0");
+    }
+
+    #[test]
+    fn to_line_dynamic() {
+        let move_event: Move = (0, 1000, 0, 0, 320, 240).into();
+        assert_eq!(move_event.to_line(), " M,0,0,1000,0,0,320,240");
+
+        let move_event_easing: Move = (Easing::QuadOut, 0, 1000, 0, 0, 320, 240).into();
+        assert_eq!(move_event_easing.to_line(), " M,4,0,1000,0,0,320,240");
     }
 }

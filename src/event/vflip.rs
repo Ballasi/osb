@@ -1,28 +1,5 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 use crate::easing::Easing;
 use crate::Event;
-
-#[cfg(test)]
-mod tests {
-    use crate::{event::*, Easing};
-
-    #[test]
-    fn to_line() {
-        let vflip_event: VFlip = (0, 1000).into();
-        assert_eq!(vflip_event.to_line(), " P,0,0,1000,V");
-
-        let mut vflip_event_depth: VFlip = (Easing::QuadOut, 0, 1000).into();
-        vflip_event_depth.set_depth(2);
-        assert_eq!(vflip_event_depth.to_line(), "   P,4,0,1000,V");
-    }
-}
 
 /// `VFlip` event
 pub enum VFlip {
@@ -99,5 +76,20 @@ impl Into<VFlip> for (i32, i32) {
 impl Into<VFlip> for (Easing, i32, i32) {
     fn into(self) -> VFlip {
         VFlip::Dynamic(0, self.0, self.1, self.2)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{event::*, Easing};
+
+    #[test]
+    fn to_line() {
+        let vflip_event: VFlip = (0, 1000).into();
+        assert_eq!(vflip_event.to_line(), " P,0,0,1000,V");
+
+        let mut vflip_event_depth: VFlip = (Easing::QuadOut, 0, 1000).into();
+        vflip_event_depth.set_depth(2);
+        assert_eq!(vflip_event_depth.to_line(), "   P,4,0,1000,V");
     }
 }

@@ -1,109 +1,5 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 use crate::utils::Number;
-use std::error::Error;
-use std::fmt;
 use std::f32::consts::PI;
-
-#[cfg(test)]
-mod tests {
-    use crate::Easing;
-
-    #[test]
-    fn get_easing() {
-        assert_eq!(Easing::get_easing(1), Ok(Easing::QuadOut));
-        assert_eq!(Easing::get_easing(2), Ok(Easing::QuadIn));
-        assert_eq!(Easing::get_easing(3), Ok(Easing::QuadIn));
-        assert_eq!(Easing::get_easing(4), Ok(Easing::QuadOut));
-        assert_eq!(Easing::get_easing(5), Ok(Easing::QuadInOut));
-        assert_eq!(Easing::get_easing(6), Ok(Easing::CubicIn));
-        assert_eq!(Easing::get_easing(7), Ok(Easing::CubicOut));
-        assert_eq!(Easing::get_easing(8), Ok(Easing::CubicInOut));
-        assert_eq!(Easing::get_easing(9), Ok(Easing::QuartIn));
-        assert_eq!(Easing::get_easing(10), Ok(Easing::QuartOut));
-        assert_eq!(Easing::get_easing(11), Ok(Easing::QuartInOut));
-        assert_eq!(Easing::get_easing(12), Ok(Easing::QuintIn));
-        assert_eq!(Easing::get_easing(13), Ok(Easing::QuintOut));
-        assert_eq!(Easing::get_easing(14), Ok(Easing::QuintInOut));
-        assert_eq!(Easing::get_easing(15), Ok(Easing::SineIn));
-        assert_eq!(Easing::get_easing(16), Ok(Easing::SineOut));
-        assert_eq!(Easing::get_easing(17), Ok(Easing::SineInOut));
-        assert_eq!(Easing::get_easing(18), Ok(Easing::ExpoIn));
-        assert_eq!(Easing::get_easing(19), Ok(Easing::ExpoOut));
-        assert_eq!(Easing::get_easing(20), Ok(Easing::ExpoInOut));
-        assert_eq!(Easing::get_easing(21), Ok(Easing::CircIn));
-        assert_eq!(Easing::get_easing(22), Ok(Easing::CircOut));
-        assert_eq!(Easing::get_easing(23), Ok(Easing::CircInOut));
-        assert_eq!(Easing::get_easing(24), Ok(Easing::ElasticIn));
-        assert_eq!(Easing::get_easing(25), Ok(Easing::ElasticOut));
-        assert_eq!(Easing::get_easing(26), Ok(Easing::ElasticOut));
-        assert_eq!(Easing::get_easing(27), Ok(Easing::ElasticOut));
-        assert_eq!(Easing::get_easing(28), Ok(Easing::ElasticInOut));
-        assert_eq!(Easing::get_easing(29), Ok(Easing::BackIn));
-        assert_eq!(Easing::get_easing(30), Ok(Easing::BackOut));
-        assert_eq!(Easing::get_easing(31), Ok(Easing::BackInOut));
-        assert_eq!(Easing::get_easing(32), Ok(Easing::BounceIn));
-        assert_eq!(Easing::get_easing(33), Ok(Easing::BounceOut));
-        assert_eq!(Easing::get_easing(34), Ok(Easing::BounceInOut));
-    }
-
-    #[test]
-    fn easing_eq() {
-        assert_eq!(Easing::Out, Easing::QuadOut);
-        assert_eq!(Easing::QuadOut, Easing::Out);
-        assert_eq!(Easing::In, Easing::QuadIn);
-        assert_eq!(Easing::QuadIn, Easing::In);
-        assert_eq!(Easing::ElasticOut, Easing::ElasticHalfOut);
-        assert_eq!(Easing::ElasticHalfOut, Easing::ElasticOut);
-        assert_eq!(Easing::ElasticOut, Easing::ElasticQuarterOut);
-        assert_eq!(Easing::ElasticQuarterOut, Easing::ElasticOut);
-        assert_eq!(Easing::ElasticHalfOut, Easing::ElasticQuarterOut);
-        assert_eq!(Easing::ElasticQuarterOut, Easing::ElasticHalfOut);
-    }
-
-    #[test]
-    fn ease_functions() {
-        assert_eq!(Easing::CubicOut.ease(1, 0, 2, 0., 200.), Some(175.));
-        assert_eq!(Easing::QuartOut.ease(1, 0, 2, 0., 200.), Some(187.5));
-        assert_eq!(Easing::QuintOut.ease(1, 0, 2, 0., 200.), Some(193.75));
-        assert_eq!(
-            Easing::SineOut.ease(1, 0, 2, 0., 1.),
-            Some(2_f32.sqrt() / 2.)
-        );
-        assert_eq!(Easing::ExpoOut.ease(1, 0, 2, 0., 200.), Some(193.75));
-        assert_eq!(Easing::CircOut.ease(1, 0, 2, 0., 1.), Some(0.75_f32.sqrt()));
-        assert_eq!(Easing::ElasticIn.ease(1, 0, 2, 0., 200.), Some(-3.125));
-        assert_eq!(Easing::BackOut.ease(1, 0, 2, 0., 200.), Some(217.5395));
-        assert_eq!(Easing::BounceIn.ease(1, 0, 2, 0., 200.), Some(46.875));
-    }
-
-    #[test]
-    fn ease_functions_inout() {
-        assert_eq!(Easing::QuadInOut.ease(1, 0, 4, 0., 40.), Some(5.));
-        assert_eq!(Easing::QuadInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::QuartInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::CubicInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::QuintInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::SineInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::ExpoInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::CircInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::ElasticInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::BackInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-        assert_eq!(Easing::BounceInOut.ease(1, 0, 2, 0., 2.), Some(1.));
-    }
-
-    #[test]
-    fn ease_out_of_bounds() {
-        assert_eq!(Easing::Linear.ease(5, 0, 4, 0., 10.), None);
-        assert_eq!(Easing::Linear.ease(2, 0, 4, 10., 5.), None);
-    }
-}
 
 /// `Easing`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/Commands)
 ///
@@ -155,26 +51,6 @@ pub enum Easing {
     BounceInOut,
 }
 
-/// The error type returned when parsing an `Easing` failed
-///
-/// Example:
-/// ```
-/// use osb::{Easing, EasingParsingError};
-/// assert_eq!(Easing::get_easing(42), Err(EasingParsingError::IncorrectID));
-/// ```
-#[derive(Debug, PartialEq)]
-pub enum EasingParsingError {
-    IncorrectID,
-}
-
-impl fmt::Display for EasingParsingError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Given easing ID does not correspond to any existing easing")
-    }
-}
-
-impl Error for EasingParsingError {}
-
 impl PartialEq for Easing {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.
     ///
@@ -209,48 +85,48 @@ impl Easing {
     ///
     /// Example:
     /// ```
-    /// use osb::{Easing, EasingParsingError};
-    /// assert_eq!(Easing::get_easing(0), Ok(Easing::Linear));
-    /// assert_eq!(Easing::get_easing(42), Err(EasingParsingError::IncorrectID));
+    /// use osb::{Easing};
+    /// assert_eq!(Easing::get_easing(0), Some(Easing::Linear));
+    /// assert_eq!(Easing::get_easing(42), None);
     /// ```
-    pub fn get_easing(id: u8) -> Result<Easing, EasingParsingError> {
+    pub fn get_easing(id: u8) -> Option<Easing> {
         match id {
-            0 => Ok(Easing::Linear),
-            1 => Ok(Easing::QuadOut),
-            2 => Ok(Easing::QuadIn),
-            3 => Ok(Easing::QuadIn),
-            4 => Ok(Easing::QuadOut),
-            5 => Ok(Easing::QuadInOut),
-            6 => Ok(Easing::CubicIn),
-            7 => Ok(Easing::CubicOut),
-            8 => Ok(Easing::CubicInOut),
-            9 => Ok(Easing::QuartIn),
-            10 => Ok(Easing::QuartOut),
-            11 => Ok(Easing::QuartInOut),
-            12 => Ok(Easing::QuintIn),
-            13 => Ok(Easing::QuintOut),
-            14 => Ok(Easing::QuintInOut),
-            15 => Ok(Easing::SineIn),
-            16 => Ok(Easing::SineOut),
-            17 => Ok(Easing::SineInOut),
-            18 => Ok(Easing::ExpoIn),
-            19 => Ok(Easing::ExpoOut),
-            20 => Ok(Easing::ExpoInOut),
-            21 => Ok(Easing::CircIn),
-            22 => Ok(Easing::CircOut),
-            23 => Ok(Easing::CircInOut),
-            24 => Ok(Easing::ElasticIn),
-            25 => Ok(Easing::ElasticOut),
-            26 => Ok(Easing::ElasticOut),
-            27 => Ok(Easing::ElasticOut),
-            28 => Ok(Easing::ElasticInOut),
-            29 => Ok(Easing::BackIn),
-            30 => Ok(Easing::BackOut),
-            31 => Ok(Easing::BackInOut),
-            32 => Ok(Easing::BounceIn),
-            33 => Ok(Easing::BounceOut),
-            34 => Ok(Easing::BounceInOut),
-            _ => Err(EasingParsingError::IncorrectID),
+            0 => Some(Easing::Linear),
+            1 => Some(Easing::QuadOut),
+            2 => Some(Easing::QuadIn),
+            3 => Some(Easing::QuadIn),
+            4 => Some(Easing::QuadOut),
+            5 => Some(Easing::QuadInOut),
+            6 => Some(Easing::CubicIn),
+            7 => Some(Easing::CubicOut),
+            8 => Some(Easing::CubicInOut),
+            9 => Some(Easing::QuartIn),
+            10 => Some(Easing::QuartOut),
+            11 => Some(Easing::QuartInOut),
+            12 => Some(Easing::QuintIn),
+            13 => Some(Easing::QuintOut),
+            14 => Some(Easing::QuintInOut),
+            15 => Some(Easing::SineIn),
+            16 => Some(Easing::SineOut),
+            17 => Some(Easing::SineInOut),
+            18 => Some(Easing::ExpoIn),
+            19 => Some(Easing::ExpoOut),
+            20 => Some(Easing::ExpoInOut),
+            21 => Some(Easing::CircIn),
+            22 => Some(Easing::CircOut),
+            23 => Some(Easing::CircInOut),
+            24 => Some(Easing::ElasticIn),
+            25 => Some(Easing::ElasticOut),
+            26 => Some(Easing::ElasticOut),
+            27 => Some(Easing::ElasticOut),
+            28 => Some(Easing::ElasticInOut),
+            29 => Some(Easing::BackIn),
+            30 => Some(Easing::BackOut),
+            31 => Some(Easing::BackInOut),
+            32 => Some(Easing::BounceIn),
+            33 => Some(Easing::BounceOut),
+            34 => Some(Easing::BounceInOut),
+            _ => None,
         }
     }
 
@@ -277,17 +153,14 @@ impl Easing {
     /// let value = Easing::Out.ease(1000, 0, 2000, 100., 200.);
     /// assert_eq!(value, Some(175.));
     /// ```
-    pub fn ease<T, U>(
+    pub fn ease(
         self,
         time: i32,
         start_time: i32,
         end_time: i32,
-        from: T,
-        to: U,
+        from: impl Into<Number>,
+        to: impl Into<Number>,
     ) -> Option<f32>
-    where
-        T: Into<Number>,
-        U: Into<Number>,
     {
         let from = from.into().as_f32();
         let to = to.into().as_f32();
@@ -371,5 +244,100 @@ impl Easing {
         } else {
             2. - self.calculate(2. - 2. * x)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Easing;
+
+    #[test]
+    fn get_easing() {
+        assert_eq!(Easing::get_easing(0), Some(Easing::Linear));
+        assert_eq!(Easing::get_easing(1), Some(Easing::QuadOut));
+        assert_eq!(Easing::get_easing(2), Some(Easing::QuadIn));
+        assert_eq!(Easing::get_easing(3), Some(Easing::QuadIn));
+        assert_eq!(Easing::get_easing(4), Some(Easing::QuadOut));
+        assert_eq!(Easing::get_easing(5), Some(Easing::QuadInOut));
+        assert_eq!(Easing::get_easing(6), Some(Easing::CubicIn));
+        assert_eq!(Easing::get_easing(7), Some(Easing::CubicOut));
+        assert_eq!(Easing::get_easing(8), Some(Easing::CubicInOut));
+        assert_eq!(Easing::get_easing(9), Some(Easing::QuartIn));
+        assert_eq!(Easing::get_easing(10), Some(Easing::QuartOut));
+        assert_eq!(Easing::get_easing(11), Some(Easing::QuartInOut));
+        assert_eq!(Easing::get_easing(12), Some(Easing::QuintIn));
+        assert_eq!(Easing::get_easing(13), Some(Easing::QuintOut));
+        assert_eq!(Easing::get_easing(14), Some(Easing::QuintInOut));
+        assert_eq!(Easing::get_easing(15), Some(Easing::SineIn));
+        assert_eq!(Easing::get_easing(16), Some(Easing::SineOut));
+        assert_eq!(Easing::get_easing(17), Some(Easing::SineInOut));
+        assert_eq!(Easing::get_easing(18), Some(Easing::ExpoIn));
+        assert_eq!(Easing::get_easing(19), Some(Easing::ExpoOut));
+        assert_eq!(Easing::get_easing(20), Some(Easing::ExpoInOut));
+        assert_eq!(Easing::get_easing(21), Some(Easing::CircIn));
+        assert_eq!(Easing::get_easing(22), Some(Easing::CircOut));
+        assert_eq!(Easing::get_easing(23), Some(Easing::CircInOut));
+        assert_eq!(Easing::get_easing(24), Some(Easing::ElasticIn));
+        assert_eq!(Easing::get_easing(25), Some(Easing::ElasticOut));
+        assert_eq!(Easing::get_easing(26), Some(Easing::ElasticOut));
+        assert_eq!(Easing::get_easing(27), Some(Easing::ElasticOut));
+        assert_eq!(Easing::get_easing(28), Some(Easing::ElasticInOut));
+        assert_eq!(Easing::get_easing(29), Some(Easing::BackIn));
+        assert_eq!(Easing::get_easing(30), Some(Easing::BackOut));
+        assert_eq!(Easing::get_easing(31), Some(Easing::BackInOut));
+        assert_eq!(Easing::get_easing(32), Some(Easing::BounceIn));
+        assert_eq!(Easing::get_easing(33), Some(Easing::BounceOut));
+        assert_eq!(Easing::get_easing(34), Some(Easing::BounceInOut));
+    }
+
+    #[test]
+    fn easing_eq() {
+        assert_eq!(Easing::Out, Easing::QuadOut);
+        assert_eq!(Easing::QuadOut, Easing::Out);
+        assert_eq!(Easing::In, Easing::QuadIn);
+        assert_eq!(Easing::QuadIn, Easing::In);
+        assert_eq!(Easing::ElasticOut, Easing::ElasticHalfOut);
+        assert_eq!(Easing::ElasticHalfOut, Easing::ElasticOut);
+        assert_eq!(Easing::ElasticOut, Easing::ElasticQuarterOut);
+        assert_eq!(Easing::ElasticQuarterOut, Easing::ElasticOut);
+        assert_eq!(Easing::ElasticHalfOut, Easing::ElasticQuarterOut);
+        assert_eq!(Easing::ElasticQuarterOut, Easing::ElasticHalfOut);
+    }
+
+    #[test]
+    fn ease_functions() {
+        assert_eq!(Easing::CubicOut.ease(1, 0, 2, 0., 200.), Some(175.));
+        assert_eq!(Easing::QuartOut.ease(1, 0, 2, 0., 200.), Some(187.5));
+        assert_eq!(Easing::QuintOut.ease(1, 0, 2, 0., 200.), Some(193.75));
+        assert_eq!(
+            Easing::SineOut.ease(1, 0, 2, 0., 1.),
+            Some(2_f32.sqrt() / 2.)
+        );
+        assert_eq!(Easing::ExpoOut.ease(1, 0, 2, 0., 200.), Some(193.75));
+        assert_eq!(Easing::CircOut.ease(1, 0, 2, 0., 1.), Some(0.75_f32.sqrt()));
+        assert_eq!(Easing::ElasticIn.ease(1, 0, 2, 0., 200.), Some(-3.125));
+        assert_eq!(Easing::BackOut.ease(1, 0, 2, 0., 200.), Some(217.5395));
+        assert_eq!(Easing::BounceIn.ease(1, 0, 2, 0., 200.), Some(46.875));
+    }
+
+    #[test]
+    fn ease_functions_inout() {
+        assert_eq!(Easing::QuadInOut.ease(1, 0, 4, 0., 40.), Some(5.));
+        assert_eq!(Easing::QuadInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::QuartInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::CubicInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::QuintInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::SineInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::ExpoInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::CircInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::ElasticInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::BackInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+        assert_eq!(Easing::BounceInOut.ease(1, 0, 2, 0., 2.), Some(1.));
+    }
+
+    #[test]
+    fn ease_out_of_bounds() {
+        assert_eq!(Easing::Linear.ease(5, 0, 4, 0., 10.), None);
+        assert_eq!(Easing::Linear.ease(2, 0, 4, 10., 5.), None);
     }
 }

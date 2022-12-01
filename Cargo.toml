@@ -1,14 +1,15 @@
 [package]
 name = "osb"
-version = "0.2.0"
-authors = ["Thomas Ballasi <rust@ballasi.com>"]
+version = "0.3.0"
+authors = ["Asperatus <rust@ballasi.com>"]
 edition = "2018"
 description = "A fast, fully-fledged, scalable and secure implementation of the .osb storyboard file format"
 license = "MIT OR Apache-2.0"
 documentation = "https://docs.rs/osb"
-repository = "https://gitlab.com/Asperatus/osb/"
+repository = "https://github.com/Ballasi/osb/"
+homepage = "https://osb.ballasi.com/"
 keywords = ["osb", "osu", "storyboard", "storyboarding"]
-exclude = ["tarpaulin-report.html", ".gitlab-ci.yml"]
+exclude = ["tarpaulin-report.html", ".github/workflows/deploy.yml"]
 readme = "README.md"
 
 [dependencies]

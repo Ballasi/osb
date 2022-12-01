@@ -1,11 +1,3 @@
-// Copyright 2021 Thomas Ballasi
-//
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-
 #![crate_type = "lib"]
 #![crate_name = "osb"]
 
@@ -71,4 +63,3 @@ pub use visuals::*;
 
 mod module;
 pub use module::*;
-
