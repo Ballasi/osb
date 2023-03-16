@@ -17,6 +17,14 @@ struct EventCollection {
     additive_: Vec<Additive>,
 }
 
+/// `LoopType`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/Objects)
+pub enum LoopType {
+    /// Animation will stop on the last frame and continue displaying that last frame
+    LoopOnce,
+    /// Animation will loop forever
+    LoopForever,
+}
+
 fn events_to_str<T>(events: &Vec<T>) -> String
 where
     T: Event,
@@ -63,6 +71,15 @@ impl EventCollection {
     }
 }
 
+enum SpriteType {
+    Sprite,
+    Animation {
+        frame_count: u32,
+        frame_delay: u32,
+        loop_type: LoopType,
+    },
+}
+
 /// The struct corresponding to sprites
 pub struct Sprite {
     events: EventCollection,
@@ -73,6 +90,7 @@ pub struct Sprite {
     origin: Origin,
     start_time: Option<i32>,
     end_time: Option<i32>,
+    type_: SpriteType,
 }
 
 // Adding an event to a sprite
@@ -105,9 +123,9 @@ macro_rules! add_event {
 }
 
 impl Sprite {
-    /// Initializes a new `Sprite`
+    /// Initializes a new `Sprite` or an animation `Sprite`
     ///
-    /// See [trait implementations](#trait-implementations) to see how you can create a sprite
+    /// See [trait implementations](#trait-implementations) to see how you can create a Sprite element
     pub fn new<T>(args: T) -> Self
     where
         T: Into<Sprite>,
@@ -391,15 +409,41 @@ impl Sprite {
     ///
     /// **Warning**: this method is not meant to be used
     pub fn to_str(&self) -> String {
-        format!(
-            "Sprite,{},{},\"{}\",{},{}\n{}",
-            self.layer,
-            self.origin,
-            self.path,
-            self.pos.x,
-            self.pos.y,
-            self.events.to_str()
-        )
+        match &self.type_ {
+            SpriteType::Sprite => {
+                return format!(
+                    "Sprite,{},{},\"{}\",{},{}\n{}",
+                    self.layer,
+                    self.origin,
+                    self.path,
+                    self.pos.x,
+                    self.pos.y,
+                    self.events.to_str()
+                );
+            }
+            SpriteType::Animation {
+                frame_count,
+                frame_delay,
+                loop_type,
+            } => {
+                return format!(
+                    "Animation,{},{},\"{}\",{},{},{},{}{}\n{}",
+                    self.layer,
+                    self.origin,
+                    self.path,
+                    self.pos.x,
+                    self.pos.y,
+                    frame_count,
+                    frame_delay,
+                    match loop_type {
+                        LoopType::LoopOnce => ",LoopOnce",
+                        // defaults to LoopForever if not specified
+                        LoopType::LoopForever => "",
+                    },
+                    self.events.to_str()
+                );
+            }
+        }
     }
 
     /// Sets the [`Layer`] of the `Sprite`
@@ -429,6 +473,7 @@ impl Into<Sprite> for String {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -452,6 +497,7 @@ impl Into<Sprite> for &str {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -476,6 +522,7 @@ impl Into<Sprite> for (Origin, String) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -500,6 +547,7 @@ impl Into<Sprite> for (Origin, &str) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -524,6 +572,7 @@ impl Into<Sprite> for (String, Vec2) {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -553,6 +602,7 @@ where
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -577,6 +627,7 @@ impl Into<Sprite> for (&str, Vec2) {
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -606,6 +657,7 @@ where
             origin: Origin::Centre,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -631,6 +683,7 @@ impl Into<Sprite> for (Origin, String, Vec2) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -661,6 +714,7 @@ where
             origin: self.0,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -686,6 +740,7 @@ impl Into<Sprite> for (Origin, &str, Vec2) {
             origin: self.0,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
     }
 }
@@ -716,6 +771,428 @@ where
             origin: self.0,
             start_time: None,
             end_time: None,
+            type_: SpriteType::Sprite,
         }
+    }
+}
+
+/// Creates a `Sprite` animation with the path of the file
+///
+/// Example:
+/// ```
+/// use osb::{Sprite, LoopType};
+/// let path = String::from("res/sprite.png");
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((path, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (String, u32, u32, LoopType) {
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: self.0,
+            pos: Vec2::from(320, 240),
+            layer: Layer::Background,
+            origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.1,
+                frame_delay: self.2,
+                loop_type: self.3,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the path of the file
+///
+/// Example:
+/// ```
+/// use osb::{Sprite, LoopType};
+/// let path = "res/sprite.png";
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((path, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (&str, u32, u32, LoopType)
+{
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: String::from(self.0),
+            pos: Vec2::from(320, 240),
+            layer: Layer::Background,
+            origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.1,
+                frame_delay: self.2,
+                loop_type: self.3,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the origin and path of the file
+///
+/// Example:
+/// ```
+/// use osb::{Origin, Sprite, LoopType};
+/// let origin = Origin::Centre;
+/// let path = String::from("res/sprite.png");
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((origin, path, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (Origin, String, u32, u32, LoopType) {
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: self.1,
+            pos: Vec2::from(320, 240),
+            layer: Layer::Background,
+            origin: self.0,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.2,
+                frame_delay: self.3,
+                loop_type: self.4,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the origin and the path of the file
+///
+/// Example:
+/// ```
+/// use osb::{Origin, Sprite, LoopType};
+/// let origin = Origin::Centre;
+/// let path = "res/sprite.png";
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((origin, path, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (Origin, &str, u32, u32, LoopType) {
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: String::from(self.1),
+            pos: Vec2::from(320, 240),
+            layer: Layer::Background,
+            origin: self.0,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.2,
+                frame_delay: self.3,
+                loop_type: self.4,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Sprite, LoopType};
+/// let path = String::from("res/sprite.png");
+/// let pos = Vec2::from(320, 240);
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((path, pos, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (String, Vec2, u32, u32, LoopType) {
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: self.0,
+            pos: self.1,
+            layer: Layer::Background,
+            origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.2,
+                frame_delay: self.3,
+                loop_type: self.4,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Sprite, LoopType};
+/// let path = String::from("res/sprite.png");
+/// let x = 320;
+/// let y = 240;
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((path, x, y, frame_count, frame_delay, loop_type));
+/// ```
+impl<T, U> Into<Sprite> for (String, T, U, u32, u32, LoopType)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: self.0,
+            pos: Vec2::from(self.1, self.2),
+            layer: Layer::Background,
+            origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.3,
+                frame_delay: self.4,
+                loop_type: self.5,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Sprite, LoopType};
+/// let path = "res/sprite.png";
+/// let pos = Vec2::from(320, 240);
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((path, pos, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (&str, Vec2, u32, u32, LoopType) {
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: String::from(self.0),
+            pos: self.1,
+            layer: Layer::Background,
+            origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.2,
+                frame_delay: self.3,
+                loop_type: self.4,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Sprite, LoopType};
+/// let path = "res/sprite.png";
+/// let x = 320;
+/// let y = 240;
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((path, x, y, frame_count, frame_delay, loop_type));
+/// ```
+impl<T, U> Into<Sprite> for (&str, T, U, u32, u32, LoopType)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: String::from(self.0),
+            pos: Vec2::from(self.1, self.2),
+            layer: Layer::Background,
+            origin: Origin::Centre,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.3,
+                frame_delay: self.4,
+                loop_type: self.5,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the origin, the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Origin, Sprite, LoopType};
+/// let origin = Origin::Centre;
+/// let path = String::from("res/sprite.png");
+/// let pos = Vec2::from(320, 240);
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((origin, path, pos, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (Origin, String, Vec2, u32, u32, LoopType) {
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: self.1,
+            pos: self.2,
+            layer: Layer::Background,
+            origin: self.0,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.3,
+                frame_delay: self.4,
+                loop_type: self.5,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the origin, the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Origin, Sprite, LoopType};
+/// let origin = Origin::Centre;
+/// let path = String::from("res/sprite.png");
+/// let x = 320;
+/// let y = 240;
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((origin, path, x, y, frame_count, frame_delay, loop_type));
+/// ```
+impl<T, U> Into<Sprite> for (Origin, String, T, U, u32, u32, LoopType)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: self.1,
+            pos: Vec2::from(self.2, self.3),
+            layer: Layer::Background,
+            origin: self.0,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.4,
+                frame_delay: self.5,
+                loop_type: self.6,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the origin, the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Origin, Sprite, LoopType};
+/// let origin = Origin::Centre;
+/// let path = "res/sprite.png";
+/// let pos = Vec2::from(320, 240);
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((origin, path, pos, frame_count, frame_delay, loop_type));
+/// ```
+impl Into<Sprite> for (Origin, &str, Vec2, u32, u32, LoopType) {
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: String::from(self.1),
+            pos: self.2,
+            layer: Layer::Background,
+            origin: self.0,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.3,
+                frame_delay: self.4,
+                loop_type: self.5,
+            },
+        }
+    }
+}
+
+/// Creates a `Sprite` animation with the origin, the path of the file and the original coordinates
+///
+/// Example:
+/// ```
+/// use osb::{utils::Vec2, Origin, Sprite, LoopType};
+/// let origin = Origin::Centre;
+/// let path = "res/sprite.png";
+/// let x = 320;
+/// let y = 240;
+/// let frame_count = 20;
+/// let frame_delay = 100;
+/// let loop_type = LoopType::LoopForever;
+/// let mut sprite = Sprite::new((origin, path, x, y, frame_count, frame_delay, loop_type));
+/// ```
+impl<T, U> Into<Sprite> for (Origin, &str, T, U, u32, u32, LoopType)
+where
+    T: Into<Number>,
+    U: Into<Number>,
+{
+    fn into(self) -> Sprite {
+        Sprite {
+            events: EventCollection::new(),
+            current_depth: 0,
+            path: String::from(self.1),
+            pos: Vec2::from(self.2, self.3),
+            layer: Layer::Background,
+            origin: self.0,
+            start_time: None,
+            end_time: None,
+            type_: SpriteType::Animation {
+                frame_count: self.4,
+                frame_delay: self.5,
+                loop_type: self.6,
+            },
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Sprite, LoopType};
+
+    #[test]
+    fn animation() {
+        let sprite = Sprite::new(("sb/sprite.jpg", 10, 10, LoopType::LoopOnce));
+        assert_eq!(
+            "Animation,Background,Centre,\"sb/sprite.jpg\",320,240,10,10,LoopOnce\n",
+            sprite.to_str()
+        );
     }
 }
