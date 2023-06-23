@@ -3,6 +3,7 @@ use crate::utils::Number;
 use crate::Event;
 
 /// `Fade` event
+#[derive(Clone)]
 pub enum Fade {
     Static(usize, i32, Number),
     Dynamic(usize, Easing, i32, i32, Number, Number),

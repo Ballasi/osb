@@ -1,6 +1,7 @@
 /// Data structure to associate keys of an interval type to a certain value
+#[derive(Debug)]
 pub struct IntervalMap<K, V> {
-    points: Vec<(K, Vec<V>)>,
+    pub points: Vec<(K, Vec<V>)>,
 }
 
 impl<K, V> Default for IntervalMap<K, V> {
@@ -55,14 +56,13 @@ where
         };
         for (i, point) in self.points.iter_mut().enumerate().skip(position) {
             match point.0.cmp(&range.end) {
-                Less => point.1.push(value.clone()),
-                Equal => return,
                 Greater => {
                     let mut new_point = (range.end, point.1.clone());
                     new_point.1.push(value);
                     self.points.insert(i, new_point);
                     return;
-                }
+                },
+                _ => point.1.push(value.clone()),
             }
         }
         self.points.push((range.end, Vec::new()))

@@ -1,20 +1,20 @@
 use crate::event::*;
-use crate::utils::{Number, Vec2};
+use crate::utils::{IntervalMap, Number, Vec2};
 use crate::Layer;
 use crate::Origin;
 
 struct EventCollection {
-    move_: Vec<Move>,
-    movex_: Vec<MoveX>,
-    movey_: Vec<MoveY>,
-    fade_: Vec<Fade>,
-    rotate_: Vec<Rotate>,
-    scale_: Vec<Scale>,
-    scalevec_: Vec<ScaleVec>,
-    color_: Vec<Color>,
-    hflip_: Vec<HFlip>,
-    vflip_: Vec<VFlip>,
-    additive_: Vec<Additive>,
+    move_: IntervalMap<i32, Move>,
+    movex_: IntervalMap<i32, MoveX>,
+    movey_: IntervalMap<i32, MoveY>,
+    fade_: IntervalMap<i32, Fade>,
+    rotate_: IntervalMap<i32, Rotate>,
+    scale_: IntervalMap<i32, Scale>,
+    scalevec_: IntervalMap<i32, ScaleVec>,
+    color_: IntervalMap<i32, Color>,
+    hflip_: IntervalMap<i32, HFlip>,
+    vflip_: IntervalMap<i32, VFlip>,
+    additive_: IntervalMap<i32, Additive>,
 }
 
 /// `LoopType`s as defined in the [official osu! specifications](https://osu.ppy.sh/wiki/en/Storyboard_Scripting/Objects)
@@ -25,31 +25,32 @@ pub enum LoopType {
     LoopForever,
 }
 
-fn events_to_str<T>(events: &Vec<T>) -> String
+fn events_to_str<T>(events: &IntervalMap<i32, T>) -> String
 where
     T: Event,
 {
-    events
+    let hs: std::collections::HashSet<_> = events
+        .points
         .iter()
-        .map(|event| event.to_line() + "\n")
-        .collect::<Vec<String>>()
-        .join("")
+        .flat_map(|(_, inner_vec)| inner_vec.iter().map(|t| t.to_line() + "\n"))
+        .collect();
+    hs.into_iter().collect::<Vec<String>>().join("")
 }
 
 impl EventCollection {
     pub fn new() -> Self {
         Self {
-            move_: Vec::<Move>::new(),
-            movex_: Vec::<MoveX>::new(),
-            movey_: Vec::<MoveY>::new(),
-            fade_: Vec::<Fade>::new(),
-            rotate_: Vec::<Rotate>::new(),
-            scale_: Vec::<Scale>::new(),
-            scalevec_: Vec::<ScaleVec>::new(),
-            color_: Vec::<Color>::new(),
-            hflip_: Vec::<HFlip>::new(),
-            vflip_: Vec::<VFlip>::new(),
-            additive_: Vec::<Additive>::new(),
+            move_: IntervalMap::new(),
+            movex_: IntervalMap::new(),
+            movey_: IntervalMap::new(),
+            fade_: IntervalMap::new(),
+            rotate_: IntervalMap::new(),
+            scale_: IntervalMap::new(),
+            scalevec_: IntervalMap::new(),
+            color_: IntervalMap::new(),
+            hflip_: IntervalMap::new(),
+            vflip_: IntervalMap::new(),
+            additive_: IntervalMap::new(),
         }
     }
 
@@ -118,7 +119,7 @@ macro_rules! add_event {
 
         // Pushing it to the events
         $event.set_depth($sprite.current_depth);
-        $events.push($event);
+        $events.push(event_start..event_end, $event);
     };
 }
 
@@ -818,8 +819,7 @@ impl Into<Sprite> for (String, u32, u32, LoopType) {
 /// let loop_type = LoopType::LoopForever;
 /// let mut sprite = Sprite::new((path, frame_count, frame_delay, loop_type));
 /// ```
-impl Into<Sprite> for (&str, u32, u32, LoopType)
-{
+impl Into<Sprite> for (&str, u32, u32, LoopType) {
     fn into(self) -> Sprite {
         Sprite {
             events: EventCollection::new(),
@@ -1185,7 +1185,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{Sprite, LoopType};
+    use crate::{LoopType, Sprite};
 
     #[test]
     fn animation() {

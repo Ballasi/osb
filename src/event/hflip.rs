@@ -2,6 +2,7 @@ use crate::easing::Easing;
 use crate::Event;
 
 /// `HFlip` event
+#[derive(Clone)]
 pub enum HFlip {
     Dynamic(usize, Easing, i32, i32),
 }

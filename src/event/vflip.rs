@@ -2,6 +2,7 @@ use crate::easing::Easing;
 use crate::Event;
 
 /// `VFlip` event
+#[derive(Clone)]
 pub enum VFlip {
     Dynamic(usize, Easing, i32, i32),
 }

@@ -3,6 +3,7 @@ use crate::utils::Number;
 use crate::Event;
 
 /// `MoveY` event
+#[derive(Clone)]
 pub enum MoveY {
     Static(usize, i32, Number),
     Dynamic(usize, Easing, i32, i32, Number, Number),

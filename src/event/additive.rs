@@ -2,6 +2,7 @@ use crate::easing::Easing;
 use crate::Event;
 
 /// `Additive` event
+#[derive(Clone)]
 pub enum Additive {
     Dynamic(usize, Easing, i32, i32),
 }

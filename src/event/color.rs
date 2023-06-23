@@ -3,6 +3,7 @@ use crate::utils;
 use crate::Event;
 
 /// `Color` event
+#[derive(Clone)]
 pub enum Color {
     Static(usize, i32, utils::Color),
     Dynamic(usize, Easing, i32, i32, utils::Color, utils::Color),

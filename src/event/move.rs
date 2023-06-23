@@ -3,6 +3,7 @@ use crate::utils::{Number, Vec2};
 use crate::Event;
 
 /// `Move` event
+#[derive(Clone)]
 pub enum Move {
     Static(usize, i32, Vec2),
     Dynamic(usize, Easing, i32, i32, Vec2, Vec2),
